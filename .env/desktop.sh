@@ -8,3 +8,9 @@ function gosalt
   popd
 }
 
+function fixsalt
+{
+  pushd /c/git/profile
+  sh apply_salt.sh
+  popd
+}
