@@ -1,0 +1,1 @@
+To setup/update a saltmaster: `sh apply_salt.sh`
