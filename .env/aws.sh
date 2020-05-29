@@ -1,12 +1,17 @@
-export CLUSTER_NAME='agilbert-c1'
-
 alias minions='echo "ls -1 /var/cache/salt/master/minions" && ls -1 /var/cache/salt/master/minions'
-alias getweb="sudo salt ${CLUSTER_NAME}-interset cmd.run 'curl http://169.254.169.254/latest/meta-data/public-hostname'"
 alias saltping="echo \"sudo salt '*' test.ping\" && sudo salt '*' test.ping"
 
 
+function getweb {
+    set -x    
+    sudo salt $(cat /srv/pillar/cluster.sls | grep " name:" | awk '{ print $2}' | tr -d '\n' | tr -d '\r')-interset cmd.run 'curl http://169.254.169.254/latest/meta-data/public-hostname'
+    set +x
+}
+
 function teardown {
     pushd ~
+        set -x
+
         # delete SQS queues and Lambda functions
         sudo rm -f *.log
         sudo salt-run --log-level info --out-file interset-salt-delete-ingest-all.log state.orch aws-terminate.delete-ingest-all
@@ -30,6 +35,10 @@ function teardown {
         # delete avro bucket
         sudo salt-run state.orch crowdstrike.terminate.delete-avro-bucket
         sudo salt-run state.orch aws-maintenance.prune-ebs-volumes
+        set +x
+        echo "*****************************************************"
+        echo "                 Destroy Conmplete"
+        echo "*****************************************************"
     popd
 }
 
@@ -40,6 +49,7 @@ function rebuild {
 
         # Provision VMs
         sudo rm -f *.log
+        sudo salt-key --accept-all --yes
         sudo salt-run saltutil.sync_all
         sudo salt-run --log-level info --out-file interset-salt-1-provision.log state.orch aws-provision
         sleep 10
@@ -64,6 +74,8 @@ function rebuild {
 
         # To install and setup ingest Crowdstrike pipeline, including; Lambda functions, SQS queues, and trigger notifications
         sudo salt-run --log-level info --out-file interset-salt-3-setup-crowdstrike-ingest.log state.orch crowdstrike.ingest.setup-all
+
+        set +x
         echo "*****************************************************"
         echo "                 Rebuild Conmplete"
         echo "*****************************************************"

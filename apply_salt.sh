@@ -14,5 +14,6 @@ if [ -z "${SALT_KEY}" ]; then
     exit
 fi
 
+ssh -i "${SALT_KEY}" "centos@${SALT_MASTER}" -t "rm -rf .bashrc .env"
 scp -i "${SALT_KEY}" .bashrc "centos@${SALT_MASTER}:~/.bashrc"
 scp -i "${SALT_KEY}" -r .env "centos@${SALT_MASTER}:~/.env"
