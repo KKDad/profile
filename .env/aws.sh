@@ -37,7 +37,7 @@ function teardown {
         sudo salt-run state.orch aws-maintenance.prune-ebs-volumes
         set +x
         echo "*****************************************************"
-        echo "                 Destroy Conmplete"
+        echo "                 Destroy Complete"
         echo "*****************************************************"
     popd
 }
@@ -77,7 +77,7 @@ function rebuild {
 
         set +x
         echo "*****************************************************"
-        echo "                 Rebuild Conmplete"
+        echo "                 Rebuild Complete"
         echo "*****************************************************"
     popd
 }
