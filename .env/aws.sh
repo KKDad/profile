@@ -52,7 +52,7 @@ function rebuild {
         sudo salt-key --accept-all --yes
         sudo salt-run saltutil.sync_all
         sudo salt-run --log-level info --out-file interset-salt-1-provision.log state.orch aws-provision
-        sleep 10
+        sleep 60
 
         # Enable SSH Access
         sudo salt-run state.orch aws-maintenance.ssh-config
@@ -65,14 +65,17 @@ function rebuild {
 
         # To update the phoenix spark jars 
         sudo salt-run --log-level info state.orch aws-provision.update-phoenix-jars
+        sleep 10
         sudo salt $(sudo salt \* grains.get 'the_master_ip' --output=text | cut -d ' ' -f 2) state.apply aws-provision.update-emr-jars 
         sleep 10
 
         # To install Interset analytics for an inital ingest and run the Interset reporting services
+        date
         sudo salt-run --log-level info --out-file interset-salt-2-orchestration.log state.orch crowdstrike.deploy.orchestration
         sleep 10
 
         # To install and setup ingest Crowdstrike pipeline, including; Lambda functions, SQS queues, and trigger notifications
+        date
         sudo salt-run --log-level info --out-file interset-salt-3-setup-crowdstrike-ingest.log state.orch crowdstrike.ingest.setup-all
 
         set +x
@@ -81,3 +84,4 @@ function rebuild {
         echo "*****************************************************"
     popd
 }
+
