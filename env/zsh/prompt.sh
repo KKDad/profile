@@ -1,25 +1,28 @@
-autoload -Uz vcs_info
+setopt prompt_subst
+#setopt verbose 
+
 
 find_git_dirty() {
   local gstatus=$(git status --porcelain 2> /dev/null)
   if [[ "$gstatus" != "" ]]; then
-    git_dirty='*'
+    git_dirty="%F{red}*"
   else
-    git_dirty=''
+    git_dirty=""
   fi
 }
 
-precmd_vcs_info() { 
-  vcs_info 
+find_git_branch() {
+  local gbranch=$(git symbolic-ref --short HEAD 2> /dev/null)
+  if [[ "$gbranch" != "" ]]; then
+    git_branch=" %F{yellow}(${gbranch})"
+  else
+    git_branch=""
+  fi
 }
 
-# Append these, don't overwite the default precmd_functions
-precmd_functions+=( precmd_vcs_info )
-precmd_functions+=( find_git_dirty )
+precmd() {
+  find_git_dirty
+  find_git_branch
+}
 
-# Format the vcs_info_msg_0_ variable
-zstyle ':vcs_info:git:*' formats '(%b)'
- 
-# Set up the prompt (with git branch name)
-setopt PROMPT_SUBST
-PROMPT="%n@%m %F{green}%~ %F{cyan}${vcs_info_msg_0_}%F{red}${git_dirty}%F{lightgrey} %# "
+PROMPT='%n@%m %F{green}%~%F${git_branch}%F${git_dirty}%F{reset_color} %# '

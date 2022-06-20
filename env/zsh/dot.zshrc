@@ -14,4 +14,4 @@ if [ "$SSH_PID_COUNT" = "0" ]; then
    eval "$(ssh-agent -s)"
 fi
 
-source ~/kkdad/profile/env/zsh/prompt.sh
+source ~agilbert/kkdad/profile/env/zsh/prompt.sh
