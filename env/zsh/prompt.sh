@@ -14,7 +14,7 @@ find_git_dirty() {
 find_git_branch() {
   local gbranch=$(git symbolic-ref --short HEAD 2> /dev/null)
   if [[ "$gbranch" != "" ]]; then
-    git_branch=" %F{yellow}(${gbranch})"
+    git_branch=" %F{cyan}(${gbranch})"
   else
     git_branch=""
   fi
@@ -25,4 +25,6 @@ precmd() {
   find_git_branch
 }
 
-PROMPT='%n@%m %F{green}%~%F${git_branch}%F${git_dirty}%F{reset_color} %# '
+PROMPT='
+%F{green}%n@%m %F{yellow}%~${git_branch}%F${git_dirty}%F{reset_color}
+%# '
