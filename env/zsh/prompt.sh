@@ -26,5 +26,5 @@ precmd() {
 }
 
 PROMPT='
-%F{green}%n@%m %F{yellow}%~${git_branch}%F${git_dirty}%F{reset_color}
-%# '
+╭ %F{green}%n@%m %F{yellow}%~${git_branch}%F${git_dirty}%F{reset_color}
+╰ %# '
