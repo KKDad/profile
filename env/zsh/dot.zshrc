@@ -1,7 +1,10 @@
 autoload -Uz compinit && compinit
 
+alias ls='ls --color'
 alias ll='ls -al --color'
 alias kcdb='kubectl --context=agilbert port-forward postgres-0 5432:5432'
+
+alias explorer=open
 
 # Kubectl commands can be very slow because of Sophos
 #diskutil erasevolume HFS+ 'ram_disk' `hdiutil attach -nomount ram://262144`
@@ -15,3 +18,7 @@ if [ "$SSH_PID_COUNT" = "0" ]; then
 fi
 
 source ~agilbert/kkdad/profile/env/zsh/prompt.sh
+
+export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+
+export JAVA_HOME=`/usr/libexec/java_home`
