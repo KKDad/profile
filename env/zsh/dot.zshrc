@@ -44,6 +44,9 @@ source ~agilbert/kkdad/profile/env/zsh/prompt.sh
 export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export JAVA_HOME=`/usr/libexec/java_home`
 
+# Fix git/gpg signing error: Inappropriate ioctl for device
+export GPG_TTY=$(tty)
+
 
 # Fix an annoying docker warning
 docker() {
