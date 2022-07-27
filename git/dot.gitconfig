@@ -1,0 +1,8 @@
+[includeIf "gitdir:~/git/"]
+path = ~/git/.gitconfig.work
+
+[includeIf "gitdir:~/kkdad/"]
+path = ~/kkdad/.gitconfig.kkdad
+
+[gpg]
+program = gpg

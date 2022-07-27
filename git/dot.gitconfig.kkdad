@@ -1,0 +1,9 @@
+[user]
+email = adrian@gilbert.ca
+name = Adrian Gilbert
+ 
+[github]
+user = KKDad
+ 
+[core]
+sshCommand = ssh -i ~/.ssh/id_kkdad

@@ -1,1 +1,3 @@
-Profile aqnd Laptop configuration
+Profile and Laptop configurations
+- Mac M1
+- Dell Lenovo
