@@ -6,6 +6,9 @@ alias kcdb='kubectl --context=agilbert port-forward postgres-0 5432:5432'
 
 alias explorer=open
 
+# Add psql and libraries to path
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
 # Alias for Telepresence & cleanup
 ###############################################################
 alias tele='docker run -it -v $HOME:/home -p 5005:5005 --privileged docker-upgrade.artifactory.build.upgrade.com/telepresence:latest'
@@ -65,10 +68,21 @@ docker() {
   fi
 }
 
+# Run spectrum eod
+eod()
+{
+  echo "kubectl exec -it deployment/spectrum -- /bin/sh /docker-entrypoint.sh eod 1234 ACTIVE"
+  kubectl exec -it deployment/spectrum -- /bin/sh /docker-entrypoint.sh eod 1234 ACTIVE
+}
+
 
 update()
 {
   vi ~/.zshrc
   source ~/.zshrc
-  cp ~/.zshrc ~/kkdad/profile/env/zsh/dot.zshrc	
+  cp ~/.zshrc ~/kkdad/profile/env/zsh/dot.zshrc
+  pushd ~/kkdad/profile
+    git commit -a
+    git push
+  popd	
 }
