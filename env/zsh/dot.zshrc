@@ -89,12 +89,12 @@ update()
 
 rebase() 
 {
-   set -ex
+   set -x
    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
    git checkout master
    git fetch -p
    git pull
    git checkout $CURRENT_BRANCH
    git rebase master
-   set +ex
+   set +x
 }
