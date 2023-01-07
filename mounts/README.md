@@ -53,11 +53,11 @@ sudo vi /etc/fstab
 ~~~
 Append the following contents
 ~~~
-//vault.stapledon.ca/Virtual_Backups /backups cifs vers=3,credentials=/home/agilbert/.vault
-//vault.stapledon.ca/home /home/agilbert/vault cifs vers=3,credentials=/home/agilbert/.vault 
-//vault.stapledon.ca/video /video cifs vers=3,credentials=/home/agilbert/.vault 
-//vault.stapledon.ca/PodGeneral /pod_general cifs vers=3,credentials=/home/agilbert/.vault 
-//vault.stapledon.ca/Vault /vault cifs vers=3,credentials=/home/agilbert/.vault 
+//vault.stapledon.ca/Virtual_Backups /backups cifs vers=3,uid=1000,gid=1000,credentials=/home/agilbert/.vault
+//vault.stapledon.ca/home /home/agilbert/vault cifs vers=3,uid=1000,gid=1000,credentials=/home/agilbert/.vault 
+//vault.stapledon.ca/video /video cifs vers=3,uid=1000,gid=1000,credentials=/home/agilbert/.vault 
+//vault.stapledon.ca/PodGeneral /pod_general cifs vers=3,uid=1000,gid=1000,credentials=/home/agilbert/.vault 
+//vault.stapledon.ca/Vault /vault cifs vers=3,uid=1000,gid=1000,scredentials=/home/agilbert/.vault 
 ~~~
 
 Entries in fstab won't mount automatically, to apply them without a reboot, run the following to apply
