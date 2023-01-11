@@ -98,3 +98,10 @@ rebase()
    git rebase master
    set +x
 }
+
+killzeros() 
+{
+  set -x
+  kubectl get pods | awk '{print$1}' | xargs kubectl delete pod
+  set +x
+}
