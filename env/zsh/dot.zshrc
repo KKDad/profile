@@ -102,6 +102,6 @@ rebase()
 killzeros() 
 {
   set -x
-  kubectl get pods | awk '{print$1}' | xargs kubectl delete pod
+  kubectl get pods | grep 0/ | awk '{print$1}' | xargs kubectl delete pod
   set +x
 }
