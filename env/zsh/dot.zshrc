@@ -105,3 +105,12 @@ killzeros()
   kubectl get pods | grep 0/ | awk '{print$1}' | xargs kubectl delete pod
   set +x
 }
+
+ksetup()
+{
+  set -x
+  sh ~/Downloads/agilbert-setup
+  rm ~/Downloads/agilbert-setup
+  set +x
+ 
+}
