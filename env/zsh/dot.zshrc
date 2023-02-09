@@ -99,6 +99,13 @@ rebase()
    set +x
 }
 
+zeros() 
+{
+  set -x
+  kubectl get pods | grep 0/
+  set +x 
+}
+
 killzeros() 
 {
   set -x
@@ -113,4 +120,16 @@ ksetup()
   rm ~/Downloads/agilbert-setup
   set +x
  
+}
+
+java11() {
+  set -x
+  export JAVA_HOME=$(/usr/libexec/java_home -v 11.0.15)
+  set +x
+}
+
+java17() {
+  set -x
+  export JAVA_HOME=$(/usr/libexec/java_home -v 17.0.5)
+  set +x
 }
