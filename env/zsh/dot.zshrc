@@ -3,6 +3,7 @@ autoload -Uz compinit && compinit
 alias ls='ls --color'
 alias ll='ls -al --color'
 alias kcdb='kubectl --context=agilbert port-forward postgres-0 5432:5432'
+alias kcdbs='kubectl port-forward service/spectrum-db 1433:1433'
 
 alias explorer=open
 
