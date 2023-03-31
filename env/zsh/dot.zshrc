@@ -83,6 +83,7 @@ update()
   source ~/.zshrc
   cp ~/.zshrc ~/kkdad/profile/env/zsh/dot.zshrc
   pushd ~/kkdad/profile
+    git fetch -p && git pull
     git commit -a
     git push
   popd	
