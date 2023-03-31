@@ -61,3 +61,11 @@ rebase()
    set +x
 }
 
+cleanbranches() {
+   set -x
+   git fetch -p;
+   for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do 
+      git branch -D $branch; 
+   done
+   set +x
+}
