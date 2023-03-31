@@ -94,7 +94,7 @@ rebase()
    set -x
    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
    git checkout master
-   git fetch -p
+   git fetch -p && git pull
    git pull
    git checkout $CURRENT_BRANCH
    git rebase master
