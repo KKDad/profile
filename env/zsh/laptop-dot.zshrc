@@ -8,6 +8,7 @@ alias explorer=open
 
 # Add psql and libraries to path
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+export PATH="/opt/node-v18.15.0-darwin-arm64/bin:$PATH"
 
 # Run ssh-agent, if it's not already running
 SSH_PID_COUNT=`pgrep ssh-agent | wc -l | awk '{$1=$1};1'`
