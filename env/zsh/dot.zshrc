@@ -124,6 +124,14 @@ ksetup()
  
 }
 
+
+klog()
+{
+   TARGET_POD=$1
+   kubectl get pods | egrep "^${TARGET_POD}-*" | awk '{print$1}' | xargs kubectl logs -f
+}
+
+
 java11() {
   set -x
   export JAVA_HOME=$(/usr/libexec/java_home -v 11.0.15)
