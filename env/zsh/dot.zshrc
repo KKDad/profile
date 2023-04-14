@@ -1,14 +1,24 @@
 autoload -Uz compinit && compinit
 
+# Aliases
+###############################################################
 alias ls='ls --color'
 alias ll='ls -al --color'
 alias kcdb='kubectl --context=agilbert port-forward postgres-0 5432:5432'
 alias kcdbs='kubectl port-forward service/spectrum-db 1433:1433'
 
+alias kclss='klog creditline-servicing-srvc'
+alias klac='klog loanapp-creation-srvc'
+
 alias explorer=open
 
-# Add psql and libraries to path
+
+# Update Path
+###############################################################
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+export JAVA_HOME=`/usr/libexec/java_home`
+
 
 # Alias for Telepresence & cleanup
 ###############################################################
@@ -36,25 +46,17 @@ function setVersion() {
 alias fastinstall='mvn clean install -DskipTests=True -Dskip.unit.tests=True -Dskip.integration.tests=True -Dspotbugs.skip -Dassembly.skipAssembly=true -T 10'
 
 
-
-# Kubectl commands can be very slow because of Sophos
-###############################################################
-#diskutil erasevolume HFS+ 'ram_disk' `hdiutil attach -nomount ram://262144`
-
-alias k='kubectl --cache-dir /Volumes/ram_disk/kube_cache'
-
 # Run ssh-agent, if it's not already running
+###############################################################
 SSH_PID_COUNT=`pgrep ssh-agent | wc -l | awk '{$1=$1};1'`
 if [ "$SSH_PID_COUNT" = "0" ]; then 
    eval "$(ssh-agent -s)"
 fi
 
+
 # Include a new prompt with Git support
 source ~agilbert/kkdad/profile/env/zsh/prompt.sh
 
-
-export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
-export JAVA_HOME=`/usr/libexec/java_home`
 
 # Fix git/gpg signing error: Inappropriate ioctl for device
 export GPG_TTY=$(tty)
@@ -68,6 +70,7 @@ export GPG_TTY=$(tty)
 #     /usr/local/bin/docker "$@"
 #  fi
 #}
+
 
 # Run spectrum eod
 eod()
@@ -128,7 +131,7 @@ ksetup()
 klog()
 {
    TARGET_POD=$1
-   kubectl get pods | egrep "^${TARGET_POD}-*" | awk '{print$1}' | xargs kubectl logs -f
+   kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -f
 }
 
 
