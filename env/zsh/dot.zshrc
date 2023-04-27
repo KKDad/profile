@@ -8,6 +8,7 @@ alias kcdb='kubectl --context=agilbert port-forward postgres-0 5432:5432'
 alias kcdbs='kubectl port-forward service/spectrum-db 1433:1433'
 
 alias kclss='klog creditline-servicing-srvc'
+alias kclsm='klog creditline-servicing-srvc'
 alias klac='klog loan-app-creation-srvc'
 
 alias explorer=open
@@ -128,12 +129,17 @@ ksetup()
 }
 
 
-klog()
+klogs()
 {
-   TARGET_POD=$1
-   kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -f
+   ARGET_POD=$1
+   kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -c app --tail=1 -f | jq ' .m '
 }
 
+klog()
+{
+   ARGET_POD=$1
+   kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -c app 
+}
 
 java11() {
   set -x
