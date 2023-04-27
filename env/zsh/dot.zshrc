@@ -138,7 +138,7 @@ klogs()
 klog()
 {
    ARGET_POD=$1
-   kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -c app 
+   kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -c app -f
 }
 
 java11() {
