@@ -72,6 +72,11 @@ export GPG_TTY=$(tty)
 #  fi
 #}
 
+fixdocker()
+{
+  echo "sudo ln -s ~/.docker/run/docker.sock /var/run/docker.sock"
+  sudo ln -s ~/.docker/run/docker.sock /var/run/docker.sock
+}
 
 # Run spectrum eod
 eod()
