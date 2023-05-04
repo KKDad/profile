@@ -136,13 +136,13 @@ ksetup()
 
 klogs()
 {
-   ARGET_POD=$1
+   TARGET_POD=$1
    kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -c app --tail=1 -f | jq ' .m '
 }
 
 klog()
 {
-   ARGET_POD=$1
+   TARGET_POD=$1
    kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -c app -f
 }
 
