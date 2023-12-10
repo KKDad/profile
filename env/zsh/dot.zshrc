@@ -62,6 +62,9 @@ fi
 # Include a new prompt with Git support
 source ~agilbert/kkdad/profile/env/zsh/prompt.sh
 
+# Include nvm
+source ~agilbert/kkdad/profile/env/zsh/nvm_setup.sh
+
 
 # Fix git/gpg signing error: Inappropriate ioctl for device
 export GPG_TTY=$(tty)
@@ -170,3 +173,6 @@ cleanbranches() {
    done
    set +x
 }
+
+
+

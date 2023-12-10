@@ -19,6 +19,9 @@ fi
 # Include a new prompt with Git support
 source ~agilbert/git/profile/env/zsh/prompt.sh
 
+# Include nvm
+source ~agilbert/git/profile/env/zsh/nvm_setup.sh
+
 
 export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export JAVA_HOME=`/usr/libexec/java_home`
