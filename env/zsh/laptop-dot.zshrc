@@ -19,6 +19,9 @@ fi
 # Include a new prompt with Git support
 source ~agilbert/git/profile/env/zsh/prompt.sh
 
+# Include nvm
+source ~agilbert/git/profile/env/zsh/nvm_setup.sh
+
 
 export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export JAVA_HOME=`/usr/libexec/java_home`
@@ -26,6 +29,12 @@ export JAVA_HOME=`/usr/libexec/java_home`
 # Fix git/gpg signing error: Inappropriate ioctl for device
 export GPG_TTY=$(tty)
 
+# Homebrew on Apple Silicon
+alias brow='arch --x86_64 /usr/local/Homebrew/bin/brew'
+path=('/opt/homebrew/bin' $path)
+ 
+# Alias for running intel commands
+alias ib='PATH=/usr/local/bin'
 
 update()
 {
