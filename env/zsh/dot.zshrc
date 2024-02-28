@@ -170,3 +170,8 @@ cleanbranches() {
    done
    set +x
 }
+
+cleandynamo() {
+  echo "curl --location --request DELETE 'https://card-funding-srvc-agilbert.actuator.stacks.kube.usw2.ondemand.upgrade.com/api/dynamo'"
+  curl --location --request DELETE 'https://card-funding-srvc-agilbert.actuator.stacks.kube.usw2.ondemand.upgrade.com/api/dynamo'
+}
