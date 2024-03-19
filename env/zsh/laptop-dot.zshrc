@@ -61,11 +61,35 @@ rebase()
    set +x
 }
 
+
+# The cleanbranches function checks the current Git repository for any modified files.
+# If there are modified files, it prints a message and returns without making any changes.
+# If there are no modified files, it checks out the master branch, fetches the latest changes,
+# and deletes any local branches that have been deleted on the remote repository.
 cleanbranches() {
-   set -x
-   git fetch -p;
-   for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do 
-      git branch -D $branch; 
+      set -x
+      if [[ -n $(git status --porcelain) ]]; then
+         echo "There are modified files. No changes will be made."
+      return
+      fi
+      git checkout master
+      git fetch -p;
+      for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do 
+         git branch -D $branch; 
+      done
+      set +x
+}
+
+# The clean_all_branches function iterates over each directory in ~/git.
+# For each directory, it navigates into it, calls the cleanbranches function,
+# and then navigates back to the original directory.
+clean_all_branches() {
+   for dir in ~/git/*; do
+      if [ -d "$dir" ]; then
+         cd "$dir"
+         echo "Cleaning branches in $dir"
+         cleanbranches
+         cd -
+      fi
    done
-   set +x
 }

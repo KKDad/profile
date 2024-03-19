@@ -1,7 +1,6 @@
 setopt prompt_subst
 #setopt verbose 
 
-
 find_git_dirty() {
   local gstatus=$(git status --porcelain 2> /dev/null)
   if [[ "$gstatus" != "" ]]; then
