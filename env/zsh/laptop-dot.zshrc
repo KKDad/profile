@@ -1,8 +1,15 @@
+# Alias and function definitions foir personal M2 Laptop
+#  - author: agilbert
+#  - date: 2022-03-01
+#
+# Add the following to the end of the .zshrc file in the home directory
+
 autoload -Uz compinit && compinit
 
 alias ls='ls --color'
 alias ll='ls -al --color'
 alias kcdb='kubectl --context=agilbert port-forward postgres-0 5432:5432'
+alias grc='git rebase --continue'
 
 alias explorer=open
 
@@ -47,6 +54,16 @@ update()
     git push
   popd
   set +x	
+}
+
+# Refresh and reload the .zshrc file
+refreshZsh() {
+   if [ "$HOME/git/profile/env/zsh/laptop-dot.zshrc" -nt "$HOME/.zshrc" ]; then
+      cp "$HOME/git/profile/env/zsh/laptop-dot.zshrc" "$HOME/.zshrc"
+   elif [ "$HOME/.zshrc" -nt "$HOME/git/profile/env/zsh/laptop-dot.zshrc" ]; then
+      cp "$HOME/.zshrc" "$HOME/git/profile/env/zsh/laptop-dot.zshrc"
+   fi
+   source "$HOME/.zshrc"
 }
 
 rebase() 

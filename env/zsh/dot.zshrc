@@ -6,6 +6,8 @@ alias ls='ls --color'
 alias ll='ls -al --color'
 alias kcdb='kubectl --context=agilbert port-forward postgres-0 5432:5432'
 alias kcdbs='kubectl port-forward service/spectrum-db 1433:1433'
+alias grc='git rebase --continue'
+
 
 alias kclss='klog creditline-servicing-srvc'
 alias kclsm='klog creditline-servicing-srvc'
@@ -70,15 +72,6 @@ source ~agilbert/kkdad/profile/env/zsh/nvm_setup.sh
 export GPG_TTY=$(tty)
 
 
-# Fix an annoying docker warning
-#docker() {
-# if [[ `uname -m` == "arm64" ]] && [[ "$1" == "run" || "$1" == "build" ]]; then
-#    /usr/local/bin/docker "$1" --platform linux/amd64 "${@:2}"
-#  else
-#     /usr/local/bin/docker "$@"
-#  fi
-#}
-
 fixdocker()
 {
   echo "sudo ln -s ~/.docker/run/docker.sock /var/run/docker.sock"
@@ -103,6 +96,18 @@ update()
     git commit -a
     git push
   popd	
+}
+
+# Refresh and reload the .zshrc file
+refreshZsh() {
+  set -x
+  if [ "$HOME/kkdad/profile/env/zsh/dot.zshrc" -nt "$HOME/.zshrc" ]; then
+    cp "$HOME/kkdad/profile/env/zsh/dot.zshrc" "$HOME/.zshrc"
+  elif [ "$HOME/.zshrc" -nt "$HOME/kkdad/profile/env/zsh/dot.zshrc" ]; then
+    cp "$HOME/.zshrc" "$HOME/kkdad/profile/env/zsh/dot.zshrc"
+  fi
+  set +x
+  source "$HOME/.zshrc"
 }
 
 rebase() 
