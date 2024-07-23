@@ -207,3 +207,8 @@ cleandynamo() {
   curl --location --request DELETE 'https://card-funding-srvc-agilbert.actuator.stacks.kube.usw2.ondemand.upgrade.com/api/dynamo'
 }
 
+
+# Alias for Maven Daemon
+if command -v mvnd &> /dev/null; then
+  alias mvn='mvnd'
+fi
