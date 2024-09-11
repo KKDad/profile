@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# Set the date string once at the beginning of the script
+date_str=$(date +%Y%m%d%H%M)
+
 # Function to parse the input data
 parse_input() {
     local input_file=$1
@@ -37,8 +40,6 @@ parse_input() {
 # Function to process each repository
 process_repo() {
     local repo=$1
-    local repo_dir="$HOME/git/$repo"
-    local date_str=$(date +%Y%m%d%H%M)
     local branch_name="agilbert/nojira-major-update-$date_str"
 
     if [[ ! -d "$repo_dir" ]]; then
@@ -103,7 +104,6 @@ create_pr() {
     local repo=$1
     local updates=$2
     local repo_dir="$HOME/git/$repo"
-    local date_str=$(date +%Y%m%d%H%M)
     local branch_name="agilbert/nojira-major-update-$date_str"
 
     cd "$repo_dir" || return
@@ -130,7 +130,7 @@ if [[ ! -f "$input_file" ]]; then
     exit 1
 fi
 
-set -e
+set -xe
 
 parse_input "$input_file"
 
