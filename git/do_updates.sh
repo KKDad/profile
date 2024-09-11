@@ -40,6 +40,7 @@ parse_input() {
 # Function to process each repository
 process_repo() {
     local repo=$1
+    local repo_dir="$HOME/git/$repo"
     local branch_name="agilbert/nojira-major-update-$date_str"
 
     if [[ ! -d "$repo_dir" ]]; then
@@ -112,7 +113,7 @@ create_pr() {
     git push origin "$branch_name"
 
     # Create the pull request
-    pr_url=$(gh pr create --title "[NOJIRA] Major dependency updates" --body "$(echo -e "$updates")")
+    pr_url=$(gh pr create --title "[NOJIRA] Major dependency updates" --body "$(echo "$updates")")
     pr_urls+=("$pr_url")
 
     echo -n ""
@@ -130,7 +131,7 @@ if [[ ! -f "$input_file" ]]; then
     exit 1
 fi
 
-set -xe
+set -e
 
 parse_input "$input_file"
 
