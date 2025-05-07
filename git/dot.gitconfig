@@ -4,5 +4,8 @@ path = ~/git/.gitconfig.work
 [includeIf "gitdir:~/kkdad/"]
 path = ~/kkdad/.gitconfig.kkdad
 
+[includeIf "gitdir:~/kaileigh86/"]
+path = ~/kaileigh86/.gitconfig.kaileigh86
+
 [gpg]
 program = gpg

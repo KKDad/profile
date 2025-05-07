@@ -1,0 +1,9 @@
+[user]
+email = kgilb035@uottawa.ca
+name = Kaileigh Gilbert
+ 
+[github]
+user = kaileigh86
+ 
+[core]
+sshCommand = ssh -i ~/.ssh/id_kkdad
