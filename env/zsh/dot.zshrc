@@ -226,3 +226,8 @@ export PATH="$PATH:/Users/agilbert/ACLI"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
+# Reset iTerm2 tab title when Claude leaves it in a wrong state
+resettab() {
+  echo -ne "\033]0;\007"
+}
+
