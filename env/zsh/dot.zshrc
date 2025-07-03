@@ -218,3 +218,11 @@ cleandynamo() {
 export DOCKER_HOST=unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')
 export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
 alias docker=podman
+export PATH="$PATH:/Users/agilbert/git/claude_memory/commands"
+
+export COLUMNS="120"
+
+export PATH="$PATH:/Users/agilbert/ACLI"
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
