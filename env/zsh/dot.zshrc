@@ -20,6 +20,7 @@ alias explorer=open
 ###############################################################
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+export PATH="${PATH}:/Users/agilbert/bin"
 export JAVA_HOME=`/usr/libexec/java_home`
 
 export NVM_DIR="$HOME/.nvm"
@@ -221,8 +222,6 @@ alias docker=podman
 export PATH="$PATH:/Users/agilbert/git/claude_memory/commands"
 
 export COLUMNS="120"
-
-export PATH="$PATH:/Users/agilbert/ACLI"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
