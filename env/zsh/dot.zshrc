@@ -1,18 +1,46 @@
-autoload -Uz compinit && compinit
+# Performance optimization: Cache completions daily
+autoload -Uz compinit
+if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)" ]; then
+  compinit
+else
+  compinit -C
+fi
+
+# Profiling support (uncomment to enable)
+# zmodload zsh/zprof
+
+# History configuration
+###############################################################
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+setopt EXTENDED_HISTORY          # Write the history file in the ':start:elapsed;command' format
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire a duplicate event first when trimming history
+setopt HIST_FIND_NO_DUPS         # Do not display a previously found event
+setopt HIST_IGNORE_ALL_DUPS      # Delete an old recorded event if a new event is a duplicate
+setopt HIST_IGNORE_DUPS          # Do not record an event that was just recorded again
+setopt HIST_IGNORE_SPACE         # Do not record an event starting with a space
+setopt HIST_SAVE_NO_DUPS         # Do not write a duplicate event to the history file
+setopt HIST_VERIFY               # Do not execute immediately upon history expansion
+setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits
+setopt SHARE_HISTORY             # Share history between all sessions
+
+# Extended globbing and other shell options
+###############################################################
+setopt EXTENDED_GLOB             # Enable extended globbing
+setopt AUTO_CD                   # Auto change to a directory without typing cd
+setopt CORRECT                   # Try to correct the spelling of commands
 
 # Aliases
 ###############################################################
-alias ls='ls --color'
-alias ll='ls -al --color'
+alias ls='ls -G'
+alias ll='ls -al -G'
 alias kcdb='kubectl --context=agilbert port-forward postgres-0 5432:5432'
 alias kcdbs='kubectl port-forward service/spectrum-db 1433:1433'
 alias grc='git rebase --continue'
-
-
 alias kclss='klog creditline-servicing-srvc'
 alias kclsm='klog creditline-servicing-srvc'
 alias klac='klog loan-app-creation-srvc'
-
 alias explorer=open
 
 
@@ -22,6 +50,14 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export PATH="${PATH}:/Users/agilbert/bin"
 export JAVA_HOME=`/usr/libexec/java_home`
+
+# Autosuggestion configuration
+###############################################################
+if command -v zsh-autosuggestions &> /dev/null || [ -f "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+  ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+  ZSH_AUTOSUGGEST_USE_ASYNC=1
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#666666"
+fi
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
@@ -87,16 +123,23 @@ eod()
 }
 
 
+# Update and sync .zshrc with git repository
 update()
 {
-  vi ~/.zshrc
-  source ~/.zshrc
-  cp ~/.zshrc ~/kkdad/profile/env/zsh/dot.zshrc
-  pushd ~/kkdad/profile
-    git fetch -p && git pull
-    git commit -a
-    git push
-  popd	
+  if ! command -v vi &> /dev/null; then
+    echo "Error: vi command not found"
+    return 1
+  fi
+  
+  vi ~/.zshrc || return 1
+  source ~/.zshrc || return 1
+  cp ~/.zshrc ~/kkdad/profile/env/zsh/dot.zshrc || return 1
+  
+  pushd ~/kkdad/profile > /dev/null || return 1
+    git fetch -p && git pull || { popd > /dev/null; return 1; }
+    git commit -a || { popd > /dev/null; return 1; }
+    git push || { popd > /dev/null; return 1; }
+  popd > /dev/null
 }
 
 # Refresh and reload the .zshrc file
@@ -111,15 +154,26 @@ refreshZsh() {
   source "$HOME/.zshrc"
 }
 
+# Rebase current branch onto master
 rebase() 
 {
+   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+     echo "Error: Not in a git repository"
+     return 1
+   fi
+   
    set -x
-   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-   git checkout master
-   git fetch -p && git pull
-   git pull
-   git checkout $CURRENT_BRANCH
-   git rebase master
+   local CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+   if [[ -z "$CURRENT_BRANCH" ]]; then
+     echo "Error: Could not determine current branch"
+     set +x
+     return 1
+   fi
+   
+   git checkout master || { set +x; return 1; }
+   git fetch -p && git pull || { set +x; return 1; }
+   git checkout "$CURRENT_BRANCH" || { set +x; return 1; }
+   git rebase master || { set +x; return 1; }
    set +x
 }
 
@@ -137,25 +191,60 @@ killzeros()
   set +x
 }
 
+# Setup kubectl configuration
 ksetup()
 {
+  local setup_file=~/Downloads/agilbert-setup
+  if [[ ! -f "$setup_file" ]]; then
+    echo "Error: Setup file not found at $setup_file"
+    return 1
+  fi
+  
   set -x
-  sh ~/Downloads/agilbert-setup
-  rm ~/Downloads/agilbert-setup
+  sh "$setup_file" || { set +x; return 1; }
+  rm "$setup_file" || { set +x; return 1; }
   set +x
- 
 }
 
 
+# Get formatted logs from a Kubernetes pod
 klogs()
 {
-   TARGET_POD=$1
+   local TARGET_POD=$1
+   if [[ -z "$TARGET_POD" ]]; then
+     echo "Error: Pod name required"
+     echo "Usage: klogs <pod-name>"
+     return 1
+   fi
+   
+   if ! command -v kubectl &> /dev/null; then
+     echo "Error: kubectl not found"
+     return 1
+   fi
+   
+   if ! command -v jq &> /dev/null; then
+     echo "Error: jq not found"
+     return 1
+   fi
+   
    kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -c app --tail=1 -f | jq ' .m '
 }
 
+# Get raw logs from a Kubernetes pod
 klog()
 {
-   TARGET_POD=$1
+   local TARGET_POD=$1
+   if [[ -z "$TARGET_POD" ]]; then
+     echo "Error: Pod name required"
+     echo "Usage: klog <pod-name>"
+     return 1
+   fi
+   
+   if ! command -v kubectl &> /dev/null; then
+     echo "Error: kubectl not found"
+     return 1
+   fi
+   
    kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -c app -f
 }
 
@@ -171,34 +260,48 @@ java17() {
   set +x
 }
 
-# The cleanbranches function checks the current Git repository for any modified files.
-# If there are modified files, it prints a message and returns without making any changes.
-# If there are no modified files, it checks out the master branch, fetches the latest changes,
-# and deletes any local branches that have been deleted on the remote repository.
+# Clean up local branches that have been deleted on remote
+# Checks for modified files first and safely deletes only "gone" branches
+# Usage: cleanbranches
 cleanbranches() {
+      if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+        echo "Error: Not in a git repository"
+        return 1
+      fi
+      
       set -x
       if [[ -n $(git status --porcelain) ]]; then
          echo "There are modified files. No changes will be made."
-      return
+         set +x
+         return 1
       fi
-      git checkout master
-      git fetch -p;
+      
+      git checkout master || { set +x; return 1; }
+      git fetch -p || { set +x; return 1; }
+      
       for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do 
-         git branch -D $branch; 
+         git branch -D "$branch" || echo "Failed to delete branch: $branch"
       done
       set +x
 }
 
-# The clean_all_branches function iterates over each directory in ~/git.
-# For each directory, it navigates into it, calls the cleanbranches function,
-# and then navigates back to the original directory.
+# Clean branches in all git repositories under ~/git/
+# Iterates through each directory and runs cleanbranches function
+# Usage: clean_all_branches
 clean_all_branches() {
+   local original_dir=$(pwd)
+   
+   if [[ ! -d ~/git ]]; then
+     echo "Error: ~/git directory does not exist"
+     return 1
+   fi
+   
    for dir in ~/git/*; do
-      if [ -d "$dir" ]; then
-         cd "$dir"
+      if [[ -d "$dir" ]]; then
+         cd "$dir" || continue
          echo "Cleaning branches in $dir"
          cleanbranches
-         cd -
+         cd "$original_dir" || return 1
       fi
    done
 }
@@ -208,11 +311,6 @@ cleandynamo() {
   curl --location --request DELETE 'https://card-funding-srvc-agilbert.actuator.stacks.kube.usw2.ondemand.upgrade.com/api/dynamo'
 }
 
-
-# Alias for Maven Daemon
-#if command -v mvnd &> /dev/null; then
-#  alias mvn='mvnd'
-#fi
 
 
 ## PodMan support
@@ -260,3 +358,6 @@ function update_iterm2_badge_and_title() {
 # Add to Zsh hook so it runs before each prompt
 autoload -U add-zsh-hook
 add-zsh-hook precmd update_iterm2_badge_and_title
+
+# Show profiling results (uncomment if zprof is enabled above)
+# zprof
