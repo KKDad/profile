@@ -361,3 +361,7 @@ add-zsh-hook precmd update_iterm2_badge_and_title
 
 # Show profiling results (uncomment if zprof is enabled above)
 # zprof
+
+# Ensure we can pull docker images (SpiceDB)
+aws sso login --profile awsci.upg-technology
+
