@@ -90,6 +90,112 @@ function setVersion() {
 alias fastinstall='mvn clean install -DskipTests=True -Dskip.unit.tests=True -Dskip.integration.tests=True -Dspotbugs.skip -Dassembly.skipAssembly=true -T 10'
 
 
+# AWS SSO Token Management
+###############################################################
+# Check AWS SSO token validity and login if needed
+check_aws_sso_token_and_login() {
+  # Validate required tools exist
+  if ! command -v jq &> /dev/null; then
+    echo "Warning: jq not found, skipping AWS SSO check"
+    return 1
+  fi
+  if ! command -v gdate &> /dev/null; then
+    echo "Warning: GNU date not found, skipping AWS SSO check"
+    return 1
+  fi
+
+  local sso_cache_dir="${HOME}/.aws/sso/cache"
+  if [[ ! -d "$sso_cache_dir" ]]; then
+    # First time login - no cache yet
+    echo "Refreshing AWS SSO token..."
+    aws sso login --profile awsci.upg-technology
+    return
+  fi
+
+  # Find cache file with expiresAt field (the session token)
+  local cache_file=""
+  local expires_at=""
+
+  for file in "$sso_cache_dir"/*.json; do
+    [[ ! -f "$file" ]] && continue
+    expires_at=$(jq -r '.expiresAt // empty' "$file" 2>/dev/null)
+    if [[ -n "$expires_at" ]]; then
+      cache_file="$file"
+      break
+    fi
+  done
+
+  if [[ -z "$cache_file" ]]; then
+    # No valid cache file found - need login
+    echo "Refreshing AWS SSO token..."
+    aws sso login --profile awsci.upg-technology
+    return
+  fi
+
+  # Convert expiry time to Unix timestamp
+  local expires_timestamp
+  expires_timestamp=$(gdate -d "$expires_at" +%s 2>/dev/null)
+  if [[ $? -ne 0 ]]; then
+    # Date parsing failed - attempt login
+    echo "Refreshing AWS SSO token..."
+    aws sso login --profile awsci.upg-technology
+    return
+  fi
+
+  local current_timestamp
+  current_timestamp=$(gdate +%s)
+
+  local seconds_remaining=$(( $expires_timestamp - $current_timestamp ))
+  local minutes_remaining=$(( $seconds_remaining / 60 ))
+
+  # Renew if expires within 5 minutes or already expired
+  if [[ $minutes_remaining -le 5 ]]; then
+    echo "Refreshing AWS SSO token..."
+    aws sso login --profile awsci.upg-technology
+  fi
+}
+
+# Wrapper function for periodic token checking (shared across shells)
+maybe_refresh_aws_sso_token() {
+  local timestamp_file="${HOME}/.aws/sso-last-check-timestamp"
+  local current_time
+  current_time=$(gdate +%s 2>/dev/null)
+
+  # Skip if gdate is not available
+  if [[ $? -ne 0 ]]; then
+    return
+  fi
+
+  # Initialize or check tracking file
+  if [[ ! -f "$timestamp_file" ]]; then
+    # First check - create the file and run check
+    echo "$current_time" > "$timestamp_file"
+    check_aws_sso_token_and_login
+    return
+  fi
+
+  local last_check_time
+  last_check_time=$(cat "$timestamp_file" 2>/dev/null)
+
+  # Validate the timestamp is a number
+  if [[ ! "$last_check_time" =~ ^[0-9]+$ ]]; then
+    # Invalid timestamp - reset and check
+    echo "$current_time" > "$timestamp_file"
+    check_aws_sso_token_and_login
+    return
+  fi
+
+  local seconds_since_check=$(( $current_time - $last_check_time ))
+  local minutes_since_check=$(( $seconds_since_check / 60 ))
+
+  # Check every 15 minutes (900 seconds)
+  if [[ $minutes_since_check -ge 15 ]]; then
+    echo "$current_time" > "$timestamp_file"
+    check_aws_sso_token_and_login
+  fi
+}
+
+
 # Run ssh-agent, if it's not already running
 ###############################################################
 SSH_PID_COUNT=`pgrep ssh-agent | wc -l | awk '{$1=$1};1'`
@@ -358,10 +464,11 @@ function update_iterm2_badge_and_title() {
 # Add to Zsh hook so it runs before each prompt
 autoload -U add-zsh-hook
 add-zsh-hook precmd update_iterm2_badge_and_title
+add-zsh-hook precmd maybe_refresh_aws_sso_token
 
 # Show profiling results (uncomment if zprof is enabled above)
 # zprof
 
 # Ensure we can pull docker images (SpiceDB)
-aws sso login --profile awsci.upg-technology
+check_aws_sso_token_and_login
 
