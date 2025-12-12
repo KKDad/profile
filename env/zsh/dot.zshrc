@@ -90,6 +90,31 @@ function setVersion() {
 alias fastinstall='mvn clean install -DskipTests=True -Dskip.unit.tests=True -Dskip.integration.tests=True -Dspotbugs.skip -Dassembly.skipAssembly=true -T 10'
 
 
+# Check if current directory is in a credit-card repository
+###############################################################
+is_credit_card_repo() {
+  # Check if we're in a git repository
+  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+    return 1
+  fi
+
+  # Get the repository root
+  local repo_root
+  repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+  if [[ -z "$repo_root" ]]; then
+    return 1
+  fi
+
+  # Check if repo is under ~/git/credit-card-*
+  local expected_prefix="${HOME}/git/credit-card-"
+  if [[ "$repo_root" == ${expected_prefix}* ]]; then
+    return 0
+  fi
+
+  return 1
+}
+
+
 # AWS SSO Token Management
 ###############################################################
 # Check AWS SSO token validity and login if needed
@@ -157,6 +182,11 @@ check_aws_sso_token_and_login() {
 
 # Wrapper function for periodic token checking (shared across shells)
 maybe_refresh_aws_sso_token() {
+  # Only refresh token in credit-card repositories
+  if ! is_credit_card_repo; then
+    return
+  fi
+
   local timestamp_file="${HOME}/.aws/sso-last-check-timestamp"
   local current_time
   current_time=$(gdate +%s 2>/dev/null)
@@ -469,6 +499,8 @@ add-zsh-hook precmd maybe_refresh_aws_sso_token
 # Show profiling results (uncomment if zprof is enabled above)
 # zprof
 
-# Ensure we can pull docker images (SpiceDB)
-check_aws_sso_token_and_login
+# Ensure we can pull docker images (SpiceDB) - only in credit-card repos
+if is_credit_card_repo; then
+  check_aws_sso_token_and_login
+fi
 
