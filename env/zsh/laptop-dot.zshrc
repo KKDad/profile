@@ -24,7 +24,7 @@ source ~agilbert/git/profile/env/zsh/nvm_setup.sh
 
 
 export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
-export JAVA_HOME=`/usr/libexec/java_home`
+export JAVA_HOME=`/usr/libexec/java_home -v 21`
 
 # Fix git/gpg signing error: Inappropriate ioctl for device
 export GPG_TTY=$(tty)
