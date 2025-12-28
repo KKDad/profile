@@ -6,4 +6,4 @@ name = Kaileigh Gilbert
 user = kaileigh86
  
 [core]
-sshCommand = ssh -i ~/.ssh/id_kkdad
+sshCommand = ssh -i ~/.ssh/id_kaileigh

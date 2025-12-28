@@ -1,15 +1,8 @@
-# Alias and function definitions foir personal M2 Laptop
-#  - author: agilbert
-#  - date: 2022-03-01
-#
-# Add the following to the end of the .zshrc file in the home directory
-
 autoload -Uz compinit && compinit
 
 alias ls='ls --color'
 alias ll='ls -al --color'
 alias kcdb='kubectl --context=agilbert port-forward postgres-0 5432:5432'
-alias grc='git rebase --continue'
 
 alias explorer=open
 
@@ -56,16 +49,6 @@ update()
   set +x	
 }
 
-# Refresh and reload the .zshrc file
-refreshZsh() {
-   if [ "$HOME/git/profile/env/zsh/laptop-dot.zshrc" -nt "$HOME/.zshrc" ]; then
-      cp "$HOME/git/profile/env/zsh/laptop-dot.zshrc" "$HOME/.zshrc"
-   elif [ "$HOME/.zshrc" -nt "$HOME/git/profile/env/zsh/laptop-dot.zshrc" ]; then
-      cp "$HOME/.zshrc" "$HOME/git/profile/env/zsh/laptop-dot.zshrc"
-   fi
-   source "$HOME/.zshrc"
-}
-
 rebase() 
 {
    set -x
@@ -78,35 +61,14 @@ rebase()
    set +x
 }
 
-
-# The cleanbranches function checks the current Git repository for any modified files.
-# If there are modified files, it prints a message and returns without making any changes.
-# If there are no modified files, it checks out the master branch, fetches the latest changes,
-# and deletes any local branches that have been deleted on the remote repository.
 cleanbranches() {
-      set -x
-      if [[ -n $(git status --porcelain) ]]; then
-         echo "There are modified files. No changes will be made."
-      return
-      fi
-      git checkout master
-      git fetch -p;
-      for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do 
-         git branch -D $branch; 
-      done
-      set +x
+   set -x
+   git fetch -p;
+   for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do 
+      git branch -D $branch; 
+   done
+   set +x
 }
 
-# The clean_all_branches function iterates over each directory in ~/git.
-# For each directory, it navigates into it, calls the cleanbranches function,
-# and then navigates back to the original directory.
-clean_all_branches() {
-   for dir in ~/git/*; do
-      if [ -d "$dir" ]; then
-         cd "$dir"
-         echo "Cleaning branches in $dir"
-         cleanbranches
-         cd -
-      fi
-   done
-}
+# Added by Antigravity
+export PATH="/Users/agilbert/.antigravity/antigravity/bin:$PATH"
