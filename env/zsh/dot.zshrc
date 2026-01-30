@@ -14,6 +14,7 @@ fi
 HISTFILE=~/.zsh_history
 HISTSIZE=50000
 SAVEHIST=50000
+
 setopt EXTENDED_HISTORY          # Write the history file in the ':start:elapsed;command' format
 setopt HIST_EXPIRE_DUPS_FIRST    # Expire a duplicate event first when trimming history
 setopt HIST_FIND_NO_DUPS         # Do not display a previously found event
@@ -39,7 +40,6 @@ alias kcdb='kubectl --context=agilbert port-forward postgres-0 5432:5432'
 alias kcdbs='kubectl port-forward service/spectrum-db 1433:1433'
 alias grc='git rebase --continue'
 alias kclss='klog creditline-servicing-srvc'
-alias kclsm='klog creditline-servicing-srvc'
 alias klac='klog loan-app-creation-srvc'
 alias explorer=open
 alias opex='cd ~/git/pcl-ai-tools && claude'
@@ -50,7 +50,7 @@ alias opex='cd ~/git/pcl-ai-tools && claude'
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export PATH="${PATH}:/Users/agilbert/bin"
-export JAVA_HOME=`/usr/libexec/java_home`
+export JAVA_HOME=$(/usr/libexec/java_home)
 
 # Autosuggestion configuration
 ###############################################################
@@ -75,60 +75,32 @@ alias clean='yes | docker system prune'
 ###############################################################
 function getVersion() {
   local verbose=$1
-  if [[ "$verbose" == "-v" ]]; then 
-    echo "mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version"
-    mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version
+  if [[ "$verbose" == "-v" ]]; then
+    echo "mvn org.apache.maven.plugins:maven-help-plugin:3.4.1:evaluate -Dexpression=project.version"
+    mvn org.apache.maven.plugins:maven-help-plugin:3.4.1:evaluate -Dexpression=project.version
   else
-    echo "mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '[INFO]'"
-    mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '[INFO]'
+    echo "mvn org.apache.maven.plugins:maven-help-plugin:3.4.1:evaluate -Dexpression=project.version | grep -v '[INFO]'"
+    mvn org.apache.maven.plugins:maven-help-plugin:3.4.1:evaluate -Dexpression=project.version | grep -v '[INFO]'
   fi
 }
 
 function setVersion() {
   local v=$1
-  cat pom.xml | mvn org.codehaus.mojo:versions-maven-plugin:2.7:set -DgenerateBackupPoms=false -DprocessAllModules -DnewVersion=${v}
+  cat pom.xml | mvn org.codehaus.mojo:versions-maven-plugin:2.17.1:set -DgenerateBackupPoms=false -DprocessAllModules -DnewVersion=${v}
 }
 alias fastinstall='mvn clean install -DskipTests=True -Dskip.unit.tests=True -Dskip.integration.tests=True -Dspotbugs.skip -Dassembly.skipAssembly=true -T 10'
 
 
-# Check if current directory is in a credit-card repository
-###############################################################
-is_credit_card_repo() {
-  # Check if we're in a git repository
-  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
-    return 1
-  fi
-
-  # Get the repository root
-  local repo_root
-  repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
-  if [[ -z "$repo_root" ]]; then
-    return 1
-  fi
-
-  # Check if repo is under ~/git/credit-card-*
-  local expected_prefix="${HOME}/git/credit-card-"
-  if [[ "$repo_root" == ${expected_prefix}* ]]; then
-    return 0
-  fi
-
-  return 1
-}
-
-
 # Run ssh-agent, if it's not already running
 ###############################################################
-SSH_PID_COUNT=`pgrep ssh-agent | wc -l | awk '{$1=$1};1'`
+SSH_PID_COUNT=$(pgrep ssh-agent | wc -l | awk '{$1=$1};1')
 if [ "$SSH_PID_COUNT" = "0" ]; then 
    eval "$(ssh-agent -s)"
 fi
 
 
 # Include a new prompt with Git support
-source ~agilbert/kkdad/profile/env/zsh/prompt.sh
-
-# Include nvm
-source ~agilbert/kkdad/profile/env/zsh/nvm_setup.sh
+source ~/kkdad/profile/env/zsh/prompt.sh
 
 
 # Fix git/gpg signing error: Inappropriate ioctl for device
@@ -159,9 +131,9 @@ update()
   
   vi ~/.zshrc || return 1
   source ~/.zshrc || return 1
-  cp ~/.zshrc ~/kkdad/profile/env/zsh/dot.zshrc || return 1
-  
-  pushd ~/kkdad/profile > /dev/null || return 1
+  cp ~/.zshrc "$HOME/kkdad/profile/env/zsh/dot.zshrc" || return 1
+
+  pushd "$HOME/kkdad/profile" > /dev/null || return 1
     git fetch -p && git pull || { popd > /dev/null; return 1; }
     git commit -a || { popd > /dev/null; return 1; }
     git push || { popd > /dev/null; return 1; }
@@ -170,14 +142,19 @@ update()
 
 # Refresh and reload the .zshrc file
 refreshZsh() {
-  set -x
-  if [ "$HOME/kkdad/profile/env/zsh/dot.zshrc" -nt "$HOME/.zshrc" ]; then
-    cp "$HOME/kkdad/profile/env/zsh/dot.zshrc" "$HOME/.zshrc"
-  elif [ "$HOME/.zshrc" -nt "$HOME/kkdad/profile/env/zsh/dot.zshrc" ]; then
-    cp "$HOME/.zshrc" "$HOME/kkdad/profile/env/zsh/dot.zshrc"
+  local repo_zshrc="$HOME/kkdad/profile/env/zsh/dot.zshrc"
+  local home_zshrc="$HOME/.zshrc"
+
+  if [ "$repo_zshrc" -nt "$home_zshrc" ]; then
+    echo "Copying from repo to home..."
+    cp "$repo_zshrc" "$home_zshrc"
+  elif [ "$home_zshrc" -nt "$repo_zshrc" ]; then
+    echo "Copying from home to repo..."
+    cp "$home_zshrc" "$repo_zshrc"
+  else
+    echo "Files are in sync"
   fi
-  set +x
-  source "$HOME/.zshrc"
+  source "$home_zshrc"
 }
 
 # Rebase current branch onto master
@@ -274,16 +251,14 @@ klog()
    kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -c app -f
 }
 
-java11() {
-  set -x
-  export JAVA_HOME=$(/usr/libexec/java_home -v 11.0.15)
-  set +x
+java21() {
+  export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+  echo "JAVA_HOME set to $JAVA_HOME"
 }
 
 java17() {
-  set -x
-  export JAVA_HOME=$(/usr/libexec/java_home -v 17.0.5)
-  set +x
+  export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+  echo "JAVA_HOME set to $JAVA_HOME"
 }
 
 # Clean up local branches that have been deleted on remote
@@ -340,7 +315,9 @@ cleandynamo() {
 
 
 ## PodMan support
-export DOCKER_HOST=unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')
+if command -v podman &> /dev/null && podman machine inspect &> /dev/null 2>&1; then
+  export DOCKER_HOST=unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')
+fi
 export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
 alias docker=podman
 export PATH="$PATH:/Users/agilbert/git/claude_memory/commands"
