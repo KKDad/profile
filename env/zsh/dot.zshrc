@@ -42,6 +42,7 @@ alias kclss='klog creditline-servicing-srvc'
 alias kclsm='klog creditline-servicing-srvc'
 alias klac='klog loan-app-creation-srvc'
 alias explorer=open
+alias opex='cd ~/git/pcl-ai-tools && claude'
 
 
 # Update Path
