@@ -51,6 +51,7 @@ alias ccss='cd ~/git/credit-card-servicing-srvc'
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export PATH="${PATH}:/Users/agilbert/bin"
+export PATH="${PATH}:$HOME/.local/bin"
 export JAVA_HOME=$(/usr/libexec/java_home)
 
 # Autosuggestion configuration
