@@ -72,6 +72,10 @@ export NVM_DIR="$HOME/.nvm"
 alias tele='docker run -it -v $HOME:/home -p 5005:5005 --privileged docker-upgrade.artifactory.build.upgrade.com/telepresence:latest'
 alias clean='yes | docker system prune'
 
+# Setup for pyenv for controlling python versions
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 
 # For dealing with Maven 
 ###############################################################
