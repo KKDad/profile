@@ -3,7 +3,9 @@
 ## Machines
 
 - **MBP M4 (Work)** — `env/zsh/dot.zshrc`, `git/dot.gitconfig.work`
+  - Enterprise Java development (Maven, Kubernetes, Mirrord)
 - **MBP M2 (Personal)** — `env/zsh/laptop-dot.zshrc`, `git/dot.gitconfig.laptop`
+  - Gaming and hobby programming (Gradle, Podman, no Kubernetes/Maven)
 - **Dell Lenovo (Windows)** — physical laptop
 - **VDI (Windows 11, remote)** — `env/ming64/vdi-w11-dot.bashrc`
 
