@@ -2,10 +2,10 @@
 
 ## Machines
 
-- **Mac (Work)** — `env/zsh/dot.zshrc`, `git/dot.gitconfig.work`
-- **Mac (Personal/Laptop)** — `env/zsh/laptop-dot.zshrc`, `git/dot.gitconfig.laptop`
+- **MBP M4 (Work)** — `env/zsh/dot.zshrc`, `git/dot.gitconfig.work`
+- **MBP M2 (Personal)** — `env/zsh/laptop-dot.zshrc`, `git/dot.gitconfig.laptop`
 - **Dell Lenovo (Windows)** — physical laptop
-- **VDI (Windows 11, remote)** — `env/ming64/vdi-w10-dot.bashrc` (filename is stale)
+- **VDI (Windows 11, remote)** — `env/ming64/vdi-w11-dot.bashrc`
 
 ## Structure
 
@@ -15,6 +15,6 @@
 | `env/bash/` | Bash configs and prompt |
 | `env/ming64/` | VDI shell config (MinGW64/Git Bash) |
 | `git/` | Gitconfig per machine, clone/update scripts |
-| `homebrew/` | Brewfile (work Mac), tips |
+| `homebrew/` | `Brewfile` (MBP M4 work), `Brewfile.laptop` (MBP M2 personal), tips |
 | `mounts/` | NAS mount instructions (vault.stapledon.ca) |
 | `profile_pics/` | Profile photos and cartoon variants |
