@@ -48,7 +48,7 @@ alias ib='PATH=/usr/local/bin'
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export PATH="$HOME/.local/bin:$PATH"
-export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+export JAVA_HOME=$(/usr/libexec/java_home -v 25)
 
 # Fix git/gpg signing error: Inappropriate ioctl for device
 export GPG_TTY=$(tty)
@@ -171,6 +171,11 @@ clean_all_branches() {
          cd "$original_dir" || return 1
       fi
    done
+}
+
+java25() {
+  export JAVA_HOME=$(/usr/libexec/java_home -v 25)
+  echo "JAVA_HOME set to $JAVA_HOME"
 }
 
 java21() {
