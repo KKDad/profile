@@ -72,3 +72,5 @@ cleanbranches() {
 
 # Added by Antigravity
 export PATH="/Users/agilbert/.antigravity/antigravity/bin:$PATH"
+# Claude
+export PATH="$HOME/.local/bin:$PATH"'
