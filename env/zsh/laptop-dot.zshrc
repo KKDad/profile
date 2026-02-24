@@ -188,11 +188,10 @@ java17() {
   echo "JAVA_HOME set to $JAVA_HOME"
 }
 
-## Podman support
-if command -v podman &> /dev/null && podman machine inspect &> /dev/null 2>&1; then
-  export DOCKER_HOST=unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')
-fi
-alias docker=podman
+## Docker / Podman support
+# Use docker contexts for switching between local podman and remote docker hosts
+# (don't set DOCKER_HOST — it overrides docker context selection)
+# Contexts: `docker context use podman` (local) | `docker context use portainer` (10.0.0.47)
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
