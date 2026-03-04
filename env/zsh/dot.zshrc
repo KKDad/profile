@@ -44,6 +44,7 @@ alias klac='klog loan-app-creation-srvc'
 alias explorer=open
 alias opex='cd ~/git/pcl-ai-tools && claude'
 alias ccss='cd ~/git/credit-card-servicing-srvc'
+alias cc='cd ~/git && claude'
 
 
 # Update Path
@@ -52,7 +53,7 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export PATH="${PATH}:/Users/agilbert/bin"
 export PATH="${PATH}:$HOME/.local/bin"
-export JAVA_HOME=$(/usr/libexec/java_home)
+export JAVA_HOME=$(/usr/libexec/java_home -v 25)
 
 # Autosuggestion configuration
 ###############################################################
@@ -252,6 +253,11 @@ klog()
    fi
    
    kubectl get pods | egrep "^${TARGET_POD}-*" | head -1 | awk '{print$1}' | xargs kubectl logs -c app -f
+}
+
+java25() {
+  export JAVA_HOME=$(/usr/libexec/java_home -v 25)
+  echo "JAVA_HOME set to $JAVA_HOME"
 }
 
 java21() {
