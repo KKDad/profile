@@ -68,6 +68,11 @@ source ~agilbert/git/profile/env/zsh/prompt.sh
 # Include nvm
 source ~agilbert/git/profile/env/zsh/nvm_setup.sh
 
+# Setup for pyenv for controlling python versions
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
 
 # Update and sync .zshrc with git repository
 update()
