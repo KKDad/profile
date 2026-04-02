@@ -44,7 +44,7 @@ alias klac='klog loan-app-creation-srvc'
 alias explorer=open
 alias opex='cd ~/git/pcl-ai-tools && claude'
 alias ccss='cd ~/git/credit-card-servicing-srvc'
-alias cc='cd ~/git && claude'
+alias cc='cd ~/git && claude --permission-mode auto'
 
 
 # Update Path
@@ -68,6 +68,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 
+# Alias for Telepresence & cleanup
+###############################################################
+alias tele='docker run -it -v $HOME:/home -p 5005:5005 --privileged docker-upgrade.artifactory.build.upgrade.com/telepresence:latest'
 alias clean='yes | docker system prune'
 
 # Setup for pyenv for controlling python versions
@@ -177,10 +180,8 @@ rebase()
      return 1
    fi
    
-   git checkout master || { set +x; return 1; }
-   git fetch -p && git pull || { set +x; return 1; }
-   git checkout "$CURRENT_BRANCH" || { set +x; return 1; }
-   git rebase master || { set +x; return 1; }
+   git fetch origin -p || { set +x; return 1; }
+   git rebase origin/master || { set +x; return 1; }
    set +x
 }
 

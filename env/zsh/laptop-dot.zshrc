@@ -126,10 +126,8 @@ rebase()
      return 1
    fi
 
-   git checkout master || { set +x; return 1; }
-   git fetch -p && git pull || { set +x; return 1; }
-   git checkout "$CURRENT_BRANCH" || { set +x; return 1; }
-   git rebase master || { set +x; return 1; }
+   git fetch origin -p || { set +x; return 1; }
+   git rebase origin/master || { set +x; return 1; }
    set +x
 }
 
