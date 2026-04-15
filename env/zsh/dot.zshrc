@@ -43,10 +43,11 @@ alias kclss='klog creditline-servicing-srvc'
 alias klac='klog loan-app-creation-srvc'
 alias explorer=open
 
-alias opex='cd ~/git/pcl-ai-tools && claude'
-alias cc='cd ~/git && claude --permission-mode auto'
-alias qa='cd ~/git/qa-automation && claude --permission-mode auto'
-alias jira='cd ~/claude-team3 && claude --permission-mode auto'
+-- Claude aliases for starting claude in specific directories
+alias opex='cd ~/git/pcl-ai-tools && clear && claude'
+alias cc='cd ~/git && && clear && claude --permission-mode auto'
+alias qa='cd ~/git/qa-automation && clear && claude --permission-mode auto'
+alias jira='cd ~/claude-team3 && clear && claude --permission-mode auto'
  
 
 
