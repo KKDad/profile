@@ -42,9 +42,12 @@ alias grc='git rebase --continue'
 alias kclss='klog creditline-servicing-srvc'
 alias klac='klog loan-app-creation-srvc'
 alias explorer=open
+
 alias opex='cd ~/git/pcl-ai-tools && claude'
-alias ccss='cd ~/git/credit-card-servicing-srvc'
 alias cc='cd ~/git && claude --permission-mode auto'
+alias qa='cd ~/git/qa-automation && claude --permission-mode auto'
+alias jira='cd ~/claude-team3 && claude --permission-mode auto'
+ 
 
 
 # Update Path
