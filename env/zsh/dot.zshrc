@@ -293,6 +293,7 @@ cleanbranches() {
       
       git checkout master || { set +x; return 1; }
       git fetch -p || { set +x; return 1; }
+      git pull || { set +x; return 1; }
       
       for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do 
          git branch -D "$branch" || echo "Failed to delete branch: $branch"
