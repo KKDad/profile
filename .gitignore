@@ -1,0 +1,6 @@
+# Local secrets — never commit credentials/tokens to this repo.
+# These live in $HOME and are sourced at runtime (e.g. ~/.zshrc.secrets).
+.zshrc.secrets
+*.secrets
+.env
+.env.local

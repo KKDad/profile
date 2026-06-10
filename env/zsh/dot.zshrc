@@ -51,6 +51,10 @@ alias jira='cd ~/claude-team3 && clear && claude --permission-mode auto'
  
 
 
+# Local secrets (not source-controlled — see ~/.zshrc.secrets)
+###############################################################
+[ -f ~/.zshrc.secrets ] && source ~/.zshrc.secrets
+
 # Update Path
 ###############################################################
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
