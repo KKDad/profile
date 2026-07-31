@@ -83,24 +83,12 @@ if [ "$OVERWRITE_CREDS" = "y" ] || [ "$OVERWRITE_CREDS" = "Y" ]; then
     echo "    [+] Setting up fresh RDP credentials..."
     read -p "    Enter RDP Username: " RDP_USER
     
-    # Prompt for password securely masking the input characters
-    unset RDP_PASS
-    prompt="    Enter RDP Password: "
-    while IFS= read -p "$prompt" -r -s -n 1 char; do
-        if [[ $char == $'\0' || $char == $'\n' ]]; then
-            break
-        elif [[ $char == $'\177' || $char == $'\b' ]]; then
-            if [ ${#RDP_PASS} -gt 0 ]; then
-                RDP_PASS="${RDP_PASS%?}"
-                echo -ne "\b \b"
-            fi
-        else
-            RDP_PASS+="$char"
-            echo -n "*"
-        fi
-        prompt=""
-    done
-    echo "" # Move to a clean new line after hidden input loop completes
+    # Prompt for password securely using stty to hide input
+    printf "    Enter RDP Password: "
+    stty -echo
+    read RDP_PASS
+    stty echo
+    echo "" # Move to a clean new line after hidden input
     
     # Ensure variables aren't completely blank before passing to system
     if [ -z "$RDP_USER" ] || [ -z "$RDP_PASS" ]; then
