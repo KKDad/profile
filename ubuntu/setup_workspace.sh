@@ -43,15 +43,17 @@ fi
 # ---------------------------------------------------------------------
 echo "--> Configuring Native RDP Server & Persistence Strategy..."
 
+
+
 # Force GNOME to use Desktop Sharing (sharing the persistent active local session)
 if gsettings list-schemas | grep -q "org.gnome.desktop.remote-desktop.rdp"; then
     gsettings set org.gnome.desktop.remote-desktop.rdp screen-share-mode 'mirror-primary'
 fi
 
-# Clear out any broken certificate bindings and generate a fresh self-signed pair
+# Clear out any broken certificate bindings and generate a fresh RSA 4096 self-signed pair
 echo "    [+] Generating fresh TLS certificates for GNOME RDP..."
 mkdir -p "$HOME/.local/share/gnome-remote-desktop"
-openssl req -new -x509 -days 365 -nodes \
+openssl req -new -newkey rsa:4096 -x509 -days 365 -nodes \
     -out "$HOME/.local/share/gnome-remote-desktop/rdp.crt" \
     -keyout "$HOME/.local/share/gnome-remote-desktop/rdp.key" \
     -subj "/CN=$(hostname)"
@@ -64,7 +66,8 @@ grdctl rdp set-tls-key "$HOME/.local/share/gnome-remote-desktop/rdp.key"
 grdctl rdp enable
 
 # FIX: Disable view-only mode to allow remote keyboard/mouse input control
-grdctl rdp set-view-only disable
+grdctl rdp disable-view-only
+
 
 # Dynamic and Idempotent Credential Prompting
 # Checks if credentials exist by running a status verification check via grdctl
