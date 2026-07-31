@@ -71,7 +71,7 @@ grdctl rdp disable-view-only
 
 # Dynamic and Idempotent Credential Prompting
 # Checks if credentials exist by running a status verification check via grdctl
-if grdctl rdp status | grep -q "Username:" && grdctl rdp status | grep -q "Credentials: set"; then
+if grdctl status | grep -q "Username:" && grdctl status | grep -q "Credentials: set"; then
     echo "    [-] RDP credentials are already configured on this system."
     read -p "    [?] Do you want to overwrite the existing RDP credentials? (y/N): " OVERWRITE_CREDS
     OVERWRITE_CREDS=${OVERWRITE_CREDS:-n}
@@ -79,7 +79,7 @@ else
     OVERWRITE_CREDS="y"
 fi
 
-if [ "${OVERWRITE_CREDS,,}" = "y" ]; then
+if [ "$OVERWRITE_CREDS" = "y" ] || [ "$OVERWRITE_CREDS" = "Y" ]; then
     echo "    [+] Setting up fresh RDP credentials..."
     read -p "    Enter RDP Username: " RDP_USER
     
