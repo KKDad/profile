@@ -48,9 +48,23 @@ if gsettings list-schemas | grep -q "org.gnome.desktop.remote-desktop.rdp"; then
     gsettings set org.gnome.desktop.remote-desktop.rdp screen-share-mode 'mirror-primary'
 fi
 
-# Ensure RDP and control topology are explicitly enabled
+# Clear out any broken certificate bindings and generate a fresh self-signed pair
+echo "    [+] Generating fresh TLS certificates for GNOME RDP..."
+mkdir -p "$HOME/.local/share/gnome-remote-desktop"
+openssl req -new -x509 -days 365 -nodes \
+    -out "$HOME/.local/share/gnome-remote-desktop/rdp.crt" \
+    -keyout "$HOME/.local/share/gnome-remote-desktop/rdp.key" \
+    -subj "/CN=$(hostname)"
+
+# Bind the new certificate paths to grdctl
+grdctl rdp set-tls-cert "$HOME/.local/share/gnome-remote-desktop/rdp.crt"
+grdctl rdp set-tls-key "$HOME/.local/share/gnome-remote-desktop/rdp.key"
+
+# Enable RDP topology support
 grdctl rdp enable
-grdctl rdp enable-control
+
+# FIX: Disable view-only mode to allow remote keyboard/mouse input control
+grdctl rdp set-view-only disable
 
 # Dynamic and Idempotent Credential Prompting
 # Checks if credentials exist by running a status verification check via grdctl
