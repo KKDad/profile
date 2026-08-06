@@ -28,6 +28,10 @@ alias grep='grep --color=auto'
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+alias grc='git rebase --continue'
+
+# Podman as the docker CLI
+alias docker=podman
 
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
@@ -47,6 +51,38 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # Fix git/gpg signing error: Inappropriate ioctl for device
 export GPG_TTY=$(tty)
+
+# nvm
+###############################################################
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# pyenv
+###############################################################
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+command -v pyenv &> /dev/null && eval "$(pyenv init -)"
+
+# Gradle JDK switching (apt-installed OpenJDK 17/21/25; system default is untouched)
+###############################################################
+java17() {
+  export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+  export PATH="$JAVA_HOME/bin:$PATH"
+  echo "JAVA_HOME set to $JAVA_HOME"
+}
+
+java21() {
+  export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+  export PATH="$JAVA_HOME/bin:$PATH"
+  echo "JAVA_HOME set to $JAVA_HOME"
+}
+
+java25() {
+  export JAVA_HOME=/usr/lib/jvm/java-25-openjdk-amd64
+  export PATH="$JAVA_HOME/bin:$PATH"
+  echo "JAVA_HOME set to $JAVA_HOME"
+}
 
 # Run ssh-agent, if it's not already running
 ###############################################################

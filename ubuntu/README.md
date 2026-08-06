@@ -38,6 +38,12 @@ bash ubuntu/setup.sh
    icons, the tweaked dock (bottom position, 48px icons, 80% opacity) and dock
    favorites, and sets the Tahoe dark wallpaper installed in step 5 as both
    the desktop background and screensaver image.
-8. **Dotfiles** — deploys `env/bash/ubuntu-dot.bashrc` to `~/.bashrc` if the
+8. **Dev language tooling** — installs OpenJDK 17/21/25 via apt (for the
+   `java17`/`java21`/`java25` switcher functions in `ubuntu-dot.bashrc`; the
+   apt/`update-alternatives` default JDK is left untouched), installs
+   [nvm](https://github.com/nvm-sh/nvm) if missing, and installs
+   [pyenv](https://github.com/pyenv/pyenv) plus its Debian/Ubuntu build
+   dependencies if missing.
+9. **Dotfiles** — deploys `env/bash/ubuntu-dot.bashrc` to `~/.bashrc` if the
    repo copy is newer. After that, use the `update` and `refreshBash`
    shell functions (defined in that file) to keep the two in sync.

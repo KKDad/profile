@@ -213,7 +213,56 @@ fi
 echo "    [✓] Appearance settings applied."
 
 # ---------------------------------------------------------------------
-# 8. DOTFILE DEPLOYMENT
+# 8. DEV LANGUAGE TOOLING (Java, Node, Python)
+# ---------------------------------------------------------------------
+echo "--> Verifying dev language tooling..."
+
+# JDKs for Gradle version switching (java17/java21/java25 in ubuntu-dot.bashrc).
+# The apt default (currently OpenJDK 26 via update-alternatives) is left alone.
+declare -a JDK_TO_INSTALL=()
+for v in 17 21 25; do
+    dpkg -s "openjdk-${v}-jdk" &> /dev/null || JDK_TO_INSTALL+=("openjdk-${v}-jdk")
+done
+if [ "${#JDK_TO_INSTALL[@]}" -gt 0 ]; then
+    sudo apt update -y
+    sudo apt install -y "${JDK_TO_INSTALL[@]}"
+else
+    echo "    [-] OpenJDK 17/21/25 already installed."
+fi
+
+# nvm
+if [ ! -d "$HOME/.nvm" ]; then
+    echo "    [+] Installing nvm..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+else
+    echo "    [-] nvm already installed."
+fi
+
+# pyenv build dependencies (official pyenv suggested-build-environment for Debian/Ubuntu)
+declare -a PYENV_DEPS=(libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev)
+declare -a PYENV_DEPS_TO_INSTALL=()
+for pkg in "${PYENV_DEPS[@]}"; do
+    dpkg -s "$pkg" &> /dev/null || PYENV_DEPS_TO_INSTALL+=("$pkg")
+done
+if [ "${#PYENV_DEPS_TO_INSTALL[@]}" -gt 0 ]; then
+    sudo apt update -y
+    sudo apt install -y "${PYENV_DEPS_TO_INSTALL[@]}"
+else
+    echo "    [-] pyenv build dependencies already installed."
+fi
+
+# pyenv
+if [ -d "$HOME/.pyenv/.git" ]; then
+    git -C "$HOME/.pyenv" pull
+elif [ ! -d "$HOME/.pyenv" ]; then
+    echo "    [+] Installing pyenv..."
+    git clone https://github.com/pyenv/pyenv.git "$HOME/.pyenv"
+else
+    echo "    [-] pyenv already present."
+fi
+
+# ---------------------------------------------------------------------
+# 9. DOTFILE DEPLOYMENT
 # ---------------------------------------------------------------------
 echo "--> Deploying bash dotfiles..."
 
