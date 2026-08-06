@@ -149,7 +149,7 @@ else
     git clone https://github.com/kayozxo/GNOME-macOS-Tahoe "$THEME_DIR"
 fi
 
-(cd "$THEME_DIR" && bash install.sh -d -la -w)
+(cd "$THEME_DIR" && bash install.sh -d -w)
 
 # ---------------------------------------------------------------------
 # 6. GNOME EXTENSIONS

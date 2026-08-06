@@ -23,9 +23,10 @@ bash ubuntu/setup.sh
    This box uses GNOME's native RDP server, not xrdp.
 5. **GNOME-macOS-Tahoe theming** — clones (or pulls)
    [kayozxo/GNOME-macOS-Tahoe](https://github.com/kayozxo/GNOME-macOS-Tahoe)
-   into `~/git` and runs its installer non-interactively with `-d -la -w`
-   (dark theme, libadwaita override, Tahoe wallpapers installed to
-   `/usr/share/backgrounds/Tahoe/`). No `--flatpak` — this box uses Snap, not
+   into `~/git` and runs its installer non-interactively with `-d -w`
+   (dark theme, Tahoe wallpapers installed to
+   `/usr/share/backgrounds/Tahoe/`). No `-la` — libadwaita override caused
+   session issues. No `--flatpak` — this box uses Snap, not
    Flatpak, and that flag also has an upstream quirk where it `exit`s the
    installer immediately, before any of the other flags get applied. It's a
    third-party tool — see that repo's own README for uninstalling, accent
