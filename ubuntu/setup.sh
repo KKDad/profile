@@ -276,6 +276,28 @@ else
     echo "    [-] $HOME_BASHRC is already up to date."
 fi
 
+# ---------------------------------------------------------------------
+# 10. DOCKER / PODMAN REMOTE CONNECTIONS
+# ---------------------------------------------------------------------
+bash "$REPO_DIR/docker/setup.sh"
+
+# ---------------------------------------------------------------------
+# 11. PTYXIS TERMINAL PALETTE (synced from iTerm2)
+# ---------------------------------------------------------------------
+echo "--> Deploying iTerm2-synced Ptyxis palette..."
+
+PTYXIS_PALETTE_DIR="$HOME/.local/share/ptyxis/palettes"
+mkdir -p "$PTYXIS_PALETTE_DIR"
+REPO_PALETTE="$REPO_DIR/ubuntu/iterm-sync.palette"
+HOME_PALETTE="$PTYXIS_PALETTE_DIR/iterm-sync.palette"
+
+if [ ! -f "$HOME_PALETTE" ] || [ "$REPO_PALETTE" -nt "$HOME_PALETTE" ]; then
+    cp "$REPO_PALETTE" "$HOME_PALETTE"
+    echo "    [✓] Deployed iTerm2-synced Ptyxis palette. Select 'iTerm2 Sync' in Ptyxis > Preferences > Profile > Palette."
+else
+    echo "    [-] Ptyxis palette already up to date."
+fi
+
 echo "===================================================="
 echo " Setup complete! Run 'source ~/.bashrc' or open a new shell."
 echo "===================================================="

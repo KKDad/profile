@@ -19,6 +19,7 @@
 | `env/ming64/` | VDI shell config (MinGW64/Git Bash) |
 | `git/` | Gitconfig per machine, clone/update scripts |
 | `homebrew/` | `Brewfile` (MBP M4 work), `Brewfile.laptop` (MBP M2 personal), tips |
+| `docker/` | Idempotent docker context / podman connection setup for remote hosts |
 | `mounts/` | NAS mount instructions (vault.stapledon.ca) |
 | `ubuntu/` | Idempotent setup script for the Ubuntu dev box |
 | `profile_pics/` | Profile photos and cartoon variants |

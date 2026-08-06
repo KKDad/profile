@@ -194,7 +194,8 @@ java17() {
 ## Docker / Podman support
 # Use docker contexts for switching between local podman and remote docker hosts
 # (don't set DOCKER_HOST — it overrides docker context selection)
-# Contexts: `docker context use podman` (local) | `docker context use portainer` (10.0.0.47)
+# Contexts: `docker context use podman` (local) | `docker context use portainer` (ssh://root@10.0.0.47)
+# Podman default connection is podman-machine-default-root (rootful)
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
