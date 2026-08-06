@@ -8,6 +8,7 @@
   - Gaming and hobby programming (Gradle, Podman, no Kubernetes/Maven)
 - **Dell Lenovo (Windows)** — physical laptop
 - **VDI (Windows 11, remote)** — `env/ming64/vdi-w11-dot.bashrc`
+- **Ubuntu VDI (personal, remote via RDP)** — `env/bash/ubuntu-dot.bashrc`, `ubuntu/setup.sh`
 
 ## Structure
 
@@ -19,4 +20,5 @@
 | `git/` | Gitconfig per machine, clone/update scripts |
 | `homebrew/` | `Brewfile` (MBP M4 work), `Brewfile.laptop` (MBP M2 personal), tips |
 | `mounts/` | NAS mount instructions (vault.stapledon.ca) |
+| `ubuntu/` | Idempotent setup script for the Ubuntu dev box |
 | `profile_pics/` | Profile photos and cartoon variants |
