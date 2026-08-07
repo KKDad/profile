@@ -48,3 +48,18 @@ bash ubuntu/setup.sh
 9. **Dotfiles** — deploys `env/bash/ubuntu-dot.bashrc` to `~/.bashrc` if the
    repo copy is newer. After that, use the `update` and `refreshBash`
    shell functions (defined in that file) to keep the two in sync.
+10. **SSH config for internal hosts** — idempotently manages a marked block in
+    `~/.ssh/config` with `Host` entries for `portainer`/`portainer.stapledon.ca`
+    and `cloud`/`cloud.stapledon.ca`, scans and adds their `known_hosts`
+    entries if missing, and (via `nmcli`, if present) adds `stapledon.ca` as a
+    DNS search domain on the active NetworkManager connection so bare
+    hostnames like `ssh portainer` resolve. Warns (non-fatally) if
+    `~/.ssh/id_kkdad` isn't present — that private key is restored out of
+    band and isn't stored in this repo.
+11. **Docker / Podman remote connections** — see [`docker/README.md`](../docker/README.md).
+    Runs `docker/setup.sh`, which depends on step 10 having set up SSH access
+    to the portainer host.
+12. **Ptyxis terminal palette** — deploys an iTerm2-synced color palette
+    (`ubuntu/iterm-sync.palette`) to `~/.local/share/ptyxis/palettes/` if the
+    repo copy is newer. Select "iTerm2 Sync" under Ptyxis > Preferences >
+    Profile > Palette to use it.

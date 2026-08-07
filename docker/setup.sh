@@ -15,7 +15,7 @@ check_remote_ssh_access() {
     echo "    [!] Cannot SSH into ${REMOTE_USER}@${REMOTE_HOST} with key auth."
 
     local key
-    for key in "$HOME/.ssh/id_ed25519.pub" "$HOME/.ssh/id_rsa.pub" "$HOME/.ssh/id_ecdsa.pub"; do
+    for key in "$HOME/.ssh/id_kkdad.pub" "$HOME/.ssh/id_ed25519.pub" "$HOME/.ssh/id_rsa.pub" "$HOME/.ssh/id_ecdsa.pub"; do
         if [ -f "$key" ]; then
             echo "    [!] Local key found ($key) but not authorized on the remote host. Copy it over:"
             echo "        ssh-copy-id -i \"$key\" ${REMOTE_USER}@${REMOTE_HOST}"
@@ -23,7 +23,7 @@ check_remote_ssh_access() {
         fi
     done
 
-    echo "    [!] No local SSH key found (~/.ssh/id_ed25519, id_rsa, id_ecdsa)."
+    echo "    [!] No local SSH key found (~/.ssh/id_kkdad, id_ed25519, id_rsa, id_ecdsa)."
     echo "        Generate one, then copy it over:"
     echo "        ssh-keygen -t ed25519 && ssh-copy-id ${REMOTE_USER}@${REMOTE_HOST}"
     return 1

@@ -277,12 +277,96 @@ else
 fi
 
 # ---------------------------------------------------------------------
-# 10. DOCKER / PODMAN REMOTE CONNECTIONS
+# 10. SSH CONFIG FOR INTERNAL HOSTS (portainer / cloud)
+# ---------------------------------------------------------------------
+echo "--> Configuring SSH for portainer/cloud hosts..."
+
+SSH_DIR="$HOME/.ssh"
+SSH_CONFIG="$SSH_DIR/config"
+SSH_KNOWN_HOSTS="$SSH_DIR/known_hosts"
+SSH_MARKER_BEGIN="# >>> profile-managed hosts (stapledon.ca) -- do not edit between markers >>>"
+SSH_MARKER_END="# <<< profile-managed hosts (stapledon.ca) <<<"
+
+mkdir -p "$SSH_DIR"
+chmod 700 "$SSH_DIR"
+touch "$SSH_CONFIG"
+chmod 600 "$SSH_CONFIG"
+
+SSH_MANAGED_BLOCK="$(cat <<EOF
+$SSH_MARKER_BEGIN
+Host portainer.stapledon.ca portainer
+  HostName portainer.stapledon.ca
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/id_kkdad
+
+Host cloud.stapledon.ca cloud
+  HostName cloud.stapledon.ca
+  User root
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/id_kkdad
+$SSH_MARKER_END
+EOF
+)"
+
+if grep -qF "$SSH_MARKER_BEGIN" "$SSH_CONFIG"; then
+    CURRENT_BLOCK="$(sed -n "/^${SSH_MARKER_BEGIN}\$/,/^${SSH_MARKER_END}\$/p" "$SSH_CONFIG")"
+    if [ "$CURRENT_BLOCK" = "$SSH_MANAGED_BLOCK" ]; then
+        echo "    [-] Managed SSH host entries already up to date."
+    else
+        sed -i "/^${SSH_MARKER_BEGIN}\$/,/^${SSH_MARKER_END}\$/d" "$SSH_CONFIG"
+        printf '%s\n' "$SSH_MANAGED_BLOCK" >> "$SSH_CONFIG"
+        echo "    [✓] Updated managed SSH host entries in $SSH_CONFIG"
+    fi
+else
+    printf '\n%s\n' "$SSH_MANAGED_BLOCK" >> "$SSH_CONFIG"
+    echo "    [✓] Added managed SSH host entries to $SSH_CONFIG"
+fi
+
+echo "--> Ensuring known_hosts entries for portainer/cloud..."
+touch "$SSH_KNOWN_HOSTS"
+for h in portainer.stapledon.ca cloud.stapledon.ca; do
+    if ssh-keygen -F "$h" -f "$SSH_KNOWN_HOSTS" &> /dev/null; then
+        echo "    [-] known_hosts already has an entry for $h."
+    elif ssh-keyscan -H "$h" >> "$SSH_KNOWN_HOSTS" 2>/dev/null; then
+        echo "    [✓] Added known_hosts entry for $h."
+    else
+        echo "    [!] Could not reach $h to scan its host key (offline?)."
+    fi
+done
+
+echo "--> Ensuring stapledon.ca DNS search domain..."
+if command -v nmcli &> /dev/null; then
+    ACTIVE_CONN="$(nmcli -t -f NAME,DEVICE con show --active | grep -v '^lo:' | head -1 | cut -d: -f1)"
+    if [ -n "$ACTIVE_CONN" ]; then
+        CURRENT_SEARCH="$(nmcli -g ipv4.dns-search con show "$ACTIVE_CONN")"
+        if [[ ",$CURRENT_SEARCH," == *",stapledon.ca,"* ]]; then
+            echo "    [-] DNS search domain already includes stapledon.ca on $ACTIVE_CONN."
+        else
+            sudo nmcli con mod "$ACTIVE_CONN" +ipv4.dns-search stapledon.ca
+            sudo nmcli con mod "$ACTIVE_CONN" +ipv6.dns-search stapledon.ca
+            sudo nmcli con up "$ACTIVE_CONN" &> /dev/null
+            echo "    [✓] Added stapledon.ca as DNS search domain on $ACTIVE_CONN."
+        fi
+    else
+        echo "    [!] No active NetworkManager connection found, skipping DNS search domain."
+    fi
+else
+    echo "    [-] NetworkManager (nmcli) not present, skipping DNS search domain."
+fi
+
+if [ -f "$SSH_DIR/id_kkdad" ]; then
+    echo "    [-] ~/.ssh/id_kkdad already present."
+else
+    echo "    [!] ~/.ssh/id_kkdad not found -- SSH access to portainer.stapledon.ca / cloud.stapledon.ca (and the docker/podman remote context) won't authenticate until it's restored from your key backup. Not stored in this repo."
+fi
+
+# ---------------------------------------------------------------------
+# 11. DOCKER / PODMAN REMOTE CONNECTIONS
 # ---------------------------------------------------------------------
 bash "$REPO_DIR/docker/setup.sh"
 
 # ---------------------------------------------------------------------
-# 11. PTYXIS TERMINAL PALETTE (synced from iTerm2)
+# 12. PTYXIS TERMINAL PALETTE (synced from iTerm2)
 # ---------------------------------------------------------------------
 echo "--> Deploying iTerm2-synced Ptyxis palette..."
 
