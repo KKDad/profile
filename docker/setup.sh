@@ -3,7 +3,7 @@
 set -e
 
 REMOTE_NAME="portainer"
-REMOTE_HOST="10.0.0.47"
+REMOTE_HOST="portainer.stapledon.ca"
 REMOTE_USER="root"
 
 check_remote_ssh_access() {
