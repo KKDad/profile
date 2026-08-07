@@ -29,6 +29,7 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 alias grc='git rebase --continue'
+alias cc='cd ~/git && clear && claude --permission-mode auto'
 
 # Podman as the docker CLI
 alias docker=podman
