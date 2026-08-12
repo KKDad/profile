@@ -139,6 +139,30 @@ fi
 systemctl --user enable --now gnome-remote-desktop
 echo "    [✓] GNOME Remote Desktop service enabled and running."
 
+# RDP clipboard images only ever arrive as image/bmp; mirror them as PNG too
+# so tools that expect web image types (e.g. Claude Code's image paste) work.
+echo "--> Deploying RDP clipboard image bridge (BMP -> PNG)..."
+
+dpkg -s python3-pil &> /dev/null || { sudo apt update -y && sudo apt install -y python3-pil; }
+
+mkdir -p "$HOME/.local/bin" "$HOME/.config/systemd/user"
+REPO_CLIP_SCRIPT="$REPO_DIR/ubuntu/rdp-clipboard-png-bridge.sh"
+HOME_CLIP_SCRIPT="$HOME/.local/bin/rdp-clipboard-png-bridge.sh"
+REPO_CLIP_UNIT="$REPO_DIR/ubuntu/rdp-clipboard-png-bridge.service"
+HOME_CLIP_UNIT="$HOME/.config/systemd/user/rdp-clipboard-png-bridge.service"
+
+if [ ! -f "$HOME_CLIP_SCRIPT" ] || [ "$REPO_CLIP_SCRIPT" -nt "$HOME_CLIP_SCRIPT" ]; then
+    cp "$REPO_CLIP_SCRIPT" "$HOME_CLIP_SCRIPT"
+    chmod +x "$HOME_CLIP_SCRIPT"
+fi
+if [ ! -f "$HOME_CLIP_UNIT" ] || [ "$REPO_CLIP_UNIT" -nt "$HOME_CLIP_UNIT" ]; then
+    cp "$REPO_CLIP_UNIT" "$HOME_CLIP_UNIT"
+fi
+
+systemctl --user daemon-reload
+systemctl --user enable --now rdp-clipboard-png-bridge
+echo "    [✓] RDP clipboard image bridge deployed and running."
+
 # ---------------------------------------------------------------------
 # 5. GNOME-macOS-Tahoe THEMING
 # ---------------------------------------------------------------------

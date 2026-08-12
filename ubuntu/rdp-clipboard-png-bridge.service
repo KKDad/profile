@@ -1,0 +1,9 @@
+[Unit]
+Description=Mirror RDP clipboard images (BMP) as PNG for Wayland clients
+
+[Service]
+ExecStart=/usr/bin/wl-paste --watch %h/.local/bin/rdp-clipboard-png-bridge.sh
+Restart=on-failure
+
+[Install]
+WantedBy=gnome-session.target
