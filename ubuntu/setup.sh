@@ -388,6 +388,45 @@ else
     echo "    [-] Ptyxis palette already up to date."
 fi
 
+# ---------------------------------------------------------------------
+# 13. SHOTCLIP + RDP CLIPBOARD IMAGE BRIDGE
+# ---------------------------------------------------------------------
+echo "--> Building shotclip and deploying RDP clipboard image bridge..."
+
+declare -a SHOTCLIP_DEPS=(libwayland-dev wayland-protocols libglib2.0-dev pkg-config python3-pil)
+declare -a SHOTCLIP_DEPS_TO_INSTALL=()
+for pkg in "${SHOTCLIP_DEPS[@]}"; do
+    dpkg -s "$pkg" &> /dev/null || SHOTCLIP_DEPS_TO_INSTALL+=("$pkg")
+done
+if [ "${#SHOTCLIP_DEPS_TO_INSTALL[@]}" -gt 0 ]; then
+    sudo apt update -y
+    sudo apt install -y "${SHOTCLIP_DEPS_TO_INSTALL[@]}"
+else
+    echo "    [-] shotclip build/runtime dependencies already installed."
+fi
+
+SHOTCLIP_DIR="$GIT_DIR/shotclip"
+if [ -d "$SHOTCLIP_DIR/.git" ]; then
+    git -C "$SHOTCLIP_DIR" pull
+else
+    git clone https://github.com/KKDad/shotclip "$SHOTCLIP_DIR"
+fi
+
+make -C "$SHOTCLIP_DIR"
+make -C "$SHOTCLIP_DIR" install
+echo "    [✓] shotclip built and installed to ~/.local/bin (shotclip, shotclip-flameshot, shotclip-gnome-screenshot, shotclip-rdp-clipboard-bridge)."
+
+mkdir -p "$HOME/.config/systemd/user"
+REPO_BRIDGE_UNIT="$REPO_DIR/ubuntu/shotclip-rdp-clipboard-bridge.service"
+HOME_BRIDGE_UNIT="$HOME/.config/systemd/user/shotclip-rdp-clipboard-bridge.service"
+if [ ! -f "$HOME_BRIDGE_UNIT" ] || [ "$REPO_BRIDGE_UNIT" -nt "$HOME_BRIDGE_UNIT" ]; then
+    cp "$REPO_BRIDGE_UNIT" "$HOME_BRIDGE_UNIT"
+fi
+
+systemctl --user daemon-reload
+systemctl --user enable --now shotclip-rdp-clipboard-bridge
+echo "    [✓] RDP clipboard image bridge (shotclip-based) deployed and running."
+
 echo "===================================================="
 echo " Setup complete! Run 'source ~/.bashrc' or open a new shell."
 echo "===================================================="

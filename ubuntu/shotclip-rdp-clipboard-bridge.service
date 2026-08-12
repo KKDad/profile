@@ -1,0 +1,12 @@
+[Unit]
+Description=Poll clipboard for BMP-only images and republish as PNG via shotclip
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/shotclip-rdp-clipboard-bridge
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=gnome-session.target

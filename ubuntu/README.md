@@ -63,3 +63,17 @@ bash ubuntu/setup.sh
     (`ubuntu/iterm-sync.palette`) to `~/.local/share/ptyxis/palettes/` if the
     repo copy is newer. Select "iTerm2 Sync" under Ptyxis > Preferences >
     Profile > Palette to use it.
+13. **shotclip + RDP clipboard image bridge** — installs shotclip's build
+    deps (`libwayland-dev`, `wayland-protocols`, `libglib2.0-dev`,
+    `pkg-config`, `python3-pil`), clones/pulls
+    [KKDad/shotclip](https://github.com/KKDad/shotclip) (our fork of
+    [jq6l43d1/shotclip](https://github.com/jq6l43d1/shotclip)) into `~/git`,
+    and `make install`s it plus our `examples/shotclip-rdp-clipboard-bridge.sh`
+    addition to `~/.local/bin`. Deploys and enables
+    `shotclip-rdp-clipboard-bridge.service`, a `--user` systemd service that
+    polls the Wayland clipboard for BMP-only images — that's all
+    `gnome-remote-desktop`'s CLIPRDR bridge ever offers, regardless of what
+    the RDP client actually copied — and republishes them as PNG via
+    `shotclip`, so terminal image paste (e.g. Claude Code) works over RDP.
+    See the fork's README for why plain `wl-copy`/`wl-paste --watch` don't
+    work for this on GNOME/Mutter.
