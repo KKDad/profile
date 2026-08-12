@@ -190,6 +190,9 @@ gsettings set org.gnome.desktop.interface gtk-theme 'Tahoe-Dark'
 gsettings set org.gnome.desktop.interface icon-theme 'Yaru-dark'
 gsettings set org.gnome.shell.extensions.user-theme name 'Tahoe-Dark'
 
+# Screen lock: 20 minutes of idle time before the screen blanks/locks.
+gsettings set org.gnome.desktop.session idle-delay 1200
+
 gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM'
 gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 48
 gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.8
