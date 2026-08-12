@@ -20,6 +20,9 @@ declare -a TO_INSTALL=()
 command -v git &> /dev/null || TO_INSTALL+=(git)
 command -v curl &> /dev/null || TO_INSTALL+=(curl)
 dpkg -s build-essential &> /dev/null || TO_INSTALL+=(build-essential)
+# wl-paste/wl-copy: lets terminal apps (e.g. Claude Code) read images off the
+# Wayland clipboard, needed for image paste to work over RDP from the macOS host.
+command -v wl-paste &> /dev/null || TO_INSTALL+=(wl-clipboard)
 
 if [ "${#TO_INSTALL[@]}" -gt 0 ]; then
     sudo apt update -y
