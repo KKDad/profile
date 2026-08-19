@@ -43,6 +43,10 @@ alias kclss='klog creditline-servicing-srvc'
 alias klac='klog loan-app-creation-srvc'
 alias explorer=open
 
+# Screenshot destination (cmd-shift-3/4) — see helpers/screenshot-target.sh
+alias sc-clip='~/kkdad/profile/helpers/screenshot-target.sh clipboard'
+alias sc-desk='~/kkdad/profile/helpers/screenshot-target.sh desktop'
+
 # Claude aliases for starting claude in specific directories
 alias opex='cd ~/git/pcl-ai-tools && clear && claude'
 alias cc='cd ~/git && clear && claude --permission-mode auto'
@@ -170,6 +174,29 @@ refreshZsh() {
     echo "Files are in sync"
   fi
   source "$home_zshrc"
+}
+
+# Refresh and reload the tmux configuration. Same newer-wins copy as refreshZsh, so it
+# works whichever end you edited.
+refreshTmux() {
+  local repo_conf="$HOME/kkdad/profile/env/tmux/dot.tmux.conf"
+  local home_conf="$HOME/.tmux.conf"
+
+  if [ ! -f "$home_conf" ] || [ "$repo_conf" -nt "$home_conf" ]; then
+    echo "Copying from repo to home..."
+    cp "$repo_conf" "$home_conf" || return 1
+  elif [ "$home_conf" -nt "$repo_conf" ]; then
+    echo "Copying from home to repo..."
+    cp "$home_conf" "$repo_conf" || return 1
+  else
+    echo "Files are in sync"
+  fi
+
+  # Re-read the config in any server already running. Sessions are unaffected — this is
+  # the whole point of hosting them in tmux — so it is safe to run mid-session.
+  if command -v tmux &> /dev/null && tmux has-session 2> /dev/null; then
+    tmux source-file "$home_conf" && echo "Reloaded running tmux server"
+  fi
 }
 
 # Rebase current branch onto master
@@ -342,6 +369,10 @@ alias docker=podman
 export PATH="$PATH:/Users/agilbert/git/claude_memory/commands"
 
 export COLUMNS="120"
+
+# qa-agent plugin skills (analyze-service-pr, running-tests-jenkins) default to
+# ~/code/qa-automation; point them at the real checkout.
+export QA_AUTOMATION_DIR="$HOME/git/qa-automation"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 

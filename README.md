@@ -16,6 +16,7 @@
 |------|----------|
 | `env/zsh/` | Zsh configs, prompt, nvm setup |
 | `env/bash/` | Bash configs and prompt |
+| `env/tmux/` | tmux config (MBP M4) — hosts Claude Code sessions for FleetView |
 | `env/ming64/` | VDI shell config (MinGW64/Git Bash) |
 | `git/` | Gitconfig per machine, clone/update scripts |
 | `homebrew/` | `Brewfile` (MBP M4 work), `Brewfile.laptop` (MBP M2 personal), tips |
