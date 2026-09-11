@@ -366,6 +366,43 @@ if command -v podman &> /dev/null && podman machine inspect &> /dev/null 2>&1; t
 fi
 export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
 alias docker=podman
+
+# docker-credential-ecr-login uses the default AWS credential chain -- it does not
+# read the --profile flag. Without this, Testcontainers image pulls fail with
+# "credentials not found in native keychain" even while an SSO session is live.
+# Anything needing another AWS account must now pass --profile explicitly.
+export AWS_PROFILE=ci
+
+# This repo is public, so the work ECR account id is not kept here. Set
+# UPG_ECR_ACCOUNT in ~/.zshrc.local, which is untracked. Everything below
+# degrades quietly when it is absent, so the file stays usable on a personal
+# machine that has no work registry at all.
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
+
+if [[ -n "$UPG_ECR_ACCOUNT" ]]; then
+  UPG_ECR_REGISTRY="${UPG_ECR_ACCOUNT}.dkr.ecr.us-west-2.amazonaws.com"
+
+  # Tekton CI images and the Docker Hub pull-through cache live in the work ECR
+  # account. With the ecr-login cred helper wired up in ~/.docker/config.json
+  # this is only needed for podman-side pulls; the helper renews itself.
+  ecr_login() {
+    ecr_login_command="aws ecr --profile=ci get-login-password --region us-west-2 | podman login --username AWS --password-stdin ${UPG_ECR_REGISTRY}"
+    eval "$ecr_login_command"
+    if [[ $? -ne 0 ]] ; then
+      echo "Failed to login to ECR. Token expired? Fetching new token..."
+      aws --profile=ci sso login
+      eval "$ecr_login_command"
+    fi
+  }
+
+  # Testcontainers pulls Docker Hub images through the ECR pull-through cache -- the
+  # old dockerhub.artifactory mirror is blacked out. credify-test 400.2.2+ registers
+  # EcrPullThroughImageNameSubstitutor, which reads this prefix and inserts the
+  # "library/" segment that ECR requires for official images.
+  # Prefix verified against: aws ecr describe-pull-through-cache-rules --profile ci
+  export TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX="${UPG_ECR_REGISTRY}/dockerhub/"
+fi
+
 export PATH="$PATH:/Users/agilbert/git/claude_memory/commands"
 
 export COLUMNS="120"
@@ -415,3 +452,96 @@ add-zsh-hook precmd update_iterm2_badge_and_title
 # Show profiling results (uncomment if zprof is enabled above)
 # zprof
 
+
+# Added by secrets install
+# Ensure ~/.local/bin is in PATH (where the secrets binary lives)
+case ":$PATH:" in
+  *":$HOME/.local/bin:"*) ;;
+  *) export PATH="$HOME/.local/bin:$PATH" ;;
+esac
+secrets() {
+  local _out _exit _activate
+  # Create a temp file the binary may write export lines to (auto-activation
+  # for init / paste / setup). Sourced after the binary exits.
+  _activate="$(mktemp -t secrets-activate.XXXXXX 2>/dev/null)"
+  case "$1" in
+    paste|setup|wizard)
+      SECRETS_ACTIVATE_FILE="$_activate" command secrets "$@"
+      _exit=$?
+      ;;
+    unseal|seal|rename|mv|remove|rm)
+      _out="$(SECRETS_ACTIVATE_FILE="$_activate" command secrets "$@")"
+      _exit=$?
+      eval "$_out"
+      ;;
+    *)
+      _out="$(SECRETS_ACTIVATE_FILE="$_activate" command secrets "$@")"
+      _exit=$?
+      [ -n "$_out" ] && printf '%s\n' "$_out"
+      ;;
+  esac
+  if [ -n "$_activate" ] && [ -s "$_activate" ]; then
+    eval "$(cat "$_activate")"
+  fi
+  [ -n "$_activate" ] && rm -f "$_activate"
+  return $_exit
+}
+# secrets tab completion
+_secrets_zsh_complete() {
+  local state
+  _arguments -C '1:cmd:->cmd' '*:: :->args'
+  case $state in
+    cmd)
+      _describe 'command' '(
+        list:"List profiles"
+        unseal:"Decrypt and export env vars"
+        seal:"Unset env vars"
+        show:"Show profile metadata"
+        reveal:"Decrypt to plaintext file"
+        remove:"Remove a profile"
+        rename:"Rename a profile"
+        setup:"Interactive wizard"
+        paste:"Secure key=value capture"
+        install:"Add shell integration"
+        ksm:"Keeper Secrets Manager commands"
+        env:"Env file commands"
+        completion:"Print completion script"
+        version:"Print version"
+        help:"Show help"
+      )'
+      ;;
+    args)
+      case $words[1] in
+        env)
+          if (( ${#words[@]} == 2 )); then
+            _describe 'subcommand' '(init:"Encrypt .env file" init-values:"Encrypt values only" add:"Add KEY=VALUE")'
+          elif (( ${#words[@]} == 4 )) && [[ $words[2] == init* ]]; then
+            _files
+          fi
+          ;;
+        ksm)
+          if (( ${#words[@]} == 2 )); then
+            _describe 'subcommand' '(init:"Register profile" add:"Create vault record")'
+          elif (( ${#words[@]} == 4 )) && [[ $words[2] == init && $words[3] != --token ]]; then
+            _files -g '*.ini'
+          fi
+          ;;
+        unseal|seal|show|reveal|remove|rm|rename|mv|paste)
+          local profiles
+          profiles=(${(f)"$(command secrets list 2>/dev/null | awk 'NR>2 && $1!="" {print $1}')"})
+          [[ ${#profiles[@]} -gt 0 ]] && _describe 'profile' profiles
+          ;;
+        completion)
+          _values 'shell' zsh bash fish
+          ;;
+      esac
+      ;;
+  esac
+}
+# Register completion only when zsh's compinit has been loaded (compdef is a
+# function that compinit installs). Without this guard, sourcing .zshrc on a
+# shell that hasn't run compinit yet errors with "command not found: compdef".
+if typeset -f compdef >/dev/null 2>&1; then
+  compdef _secrets_zsh_complete secrets
+fi
+# End secrets install
