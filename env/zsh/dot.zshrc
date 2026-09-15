@@ -372,38 +372,18 @@ alias docker=podman
 # "credentials not found in native keychain" even while an SSO session is live.
 # Anything needing another AWS account must now pass --profile explicitly.
 export AWS_PROFILE=ci
+export TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX="${UPG_ECR_REGISTRY}/dockerhub/"
+export PATH="$PATH:/Users/agilbert/git/claude_memory/commands"
 
-# This repo is public, so the work ECR account id is not kept here. Set
-# UPG_ECR_ACCOUNT in ~/.zshrc.local, which is untracked. Everything below
-# degrades quietly when it is absent, so the file stays usable on a personal
-# machine that has no work registry at all.
-[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
-
-if [[ -n "$UPG_ECR_ACCOUNT" ]]; then
-  UPG_ECR_REGISTRY="${UPG_ECR_ACCOUNT}.dkr.ecr.us-west-2.amazonaws.com"
-
-  # Tekton CI images and the Docker Hub pull-through cache live in the work ECR
-  # account. With the ecr-login cred helper wired up in ~/.docker/config.json
-  # this is only needed for podman-side pulls; the helper renews itself.
-  ecr_login() {
-    ecr_login_command="aws ecr --profile=ci get-login-password --region us-west-2 | podman login --username AWS --password-stdin ${UPG_ECR_REGISTRY}"
+ecr_login() {
+    ecr_login_command="aws ecr --profile=ci get-login-password --region us-west-2 | podman login --username AWS --password-stdin 118455887602.dkr.ecr.us-west-2.amazonaws.com"
     eval "$ecr_login_command"
     if [[ $? -ne 0 ]] ; then
-      echo "Failed to login to ECR. Token expired? Fetching new token..."
-      aws --profile=ci sso login
-      eval "$ecr_login_command"
+        echo "Failed to login to ECR. Token expired? Fetching new token..."
+        aws --profile=ci sso login
+        eval "$ecr_login_command"
     fi
-  }
-
-  # Testcontainers pulls Docker Hub images through the ECR pull-through cache -- the
-  # old dockerhub.artifactory mirror is blacked out. credify-test 400.2.2+ registers
-  # EcrPullThroughImageNameSubstitutor, which reads this prefix and inserts the
-  # "library/" segment that ECR requires for official images.
-  # Prefix verified against: aws ecr describe-pull-through-cache-rules --profile ci
-  export TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX="${UPG_ECR_REGISTRY}/dockerhub/"
-fi
-
-export PATH="$PATH:/Users/agilbert/git/claude_memory/commands"
+}
 
 export COLUMNS="120"
 
