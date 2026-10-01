@@ -49,7 +49,7 @@ alias sc-desk='~/kkdad/profile/helpers/screenshot-target.sh desktop'
 
 # Claude aliases for starting claude in specific directories
 alias opex='cd ~/git/pcl-ai-tools && clear && claude'
-alias cc='cd ~/git && clear && claude --permission-mode auto'
+alias cc='cd ~/git && clear && claude --permission-mode auto --model opus'
 alias qa='cd ~/git/qa-automation && clear && claude --permission-mode auto'
 alias jira='cd ~/claude-team3 && clear && claude --permission-mode auto'
  
