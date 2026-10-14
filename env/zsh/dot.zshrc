@@ -42,6 +42,7 @@ alias grc='git rebase --continue'
 alias kclss='klog creditline-servicing-srvc'
 alias klac='klog loan-app-creation-srvc'
 alias explorer=open
+alias prs='python ~/runbook/my-pr-gates.py'
 
 # Screenshot destination (cmd-shift-3/4) — see helpers/screenshot-target.sh
 alias sc-clip='~/kkdad/profile/helpers/screenshot-target.sh clipboard'
