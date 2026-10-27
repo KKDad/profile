@@ -22,7 +22,7 @@ set -euo pipefail
 DOMAIN="com.apple.screencapture"
 
 current_target() {
-  defaults read "$DOMAIN" target 2>/dev/null || echo "file"
+  defaults read "$DOMAIN" target-screenshot 2>/dev/null || defaults read "$DOMAIN" target 2>/dev/null || echo "file"
 }
 
 current_location() {
@@ -31,7 +31,7 @@ current_location() {
 
 apply() {
   # Screenshot UI / SystemUIServer caches these on launch.
-  killall SystemUIServer 2>/dev/null || true
+  killall SystemUIServer screencaptureui 2>/dev/null || true
 }
 
 show_status() {
@@ -41,6 +41,7 @@ show_status() {
 
 set_clipboard() {
   defaults write "$DOMAIN" target clipboard
+  defaults write "$DOMAIN" target-screenshot clipboard
   apply
   echo "Screenshots -> clipboard."
 }
@@ -53,7 +54,9 @@ set_file() {
     exit 1
   fi
   defaults write "$DOMAIN" target file
+  defaults write "$DOMAIN" target-screenshot file
   defaults write "$DOMAIN" location "$dir"
+  defaults write "$DOMAIN" location-screenshot "$dir"
   apply
   printf 'Screenshots -> files in %s\n' "$dir"
 }

@@ -42,6 +42,7 @@ alias grc='git rebase --continue'
 alias kclss='klog creditline-servicing-srvc'
 alias klac='klog loan-app-creation-srvc'
 alias explorer=open
+alias prs='python ~/runbook/my-pr-gates.py'
 
 # Screenshot destination (cmd-shift-3/4) — see helpers/screenshot-target.sh
 alias sc-clip='~/kkdad/profile/helpers/screenshot-target.sh clipboard'
@@ -53,6 +54,9 @@ alias cc='cd ~/git && clear && claude --permission-mode auto --model opus'
 alias qa='cd ~/git/qa-automation && clear && claude --permission-mode auto'
 alias jira='cd ~/claude-team3 && clear && claude --permission-mode auto'
  
+
+# Register herdr
+source ~/kkdad/profile/env/zsh/herdr.sh
 
 
 # Local secrets (not source-controlled — see ~/.zshrc.secrets)

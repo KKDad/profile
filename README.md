@@ -14,7 +14,8 @@
 
 | Path | Contents |
 |------|----------|
-| `env/zsh/` | Zsh configs, prompt, nvm setup |
+| `env/zsh/` | Zsh configs, prompt, nvm setup, herdr Agents panel hook (`herdr.sh`) |
+| `env/herdr/` | herdr config (MBP M4); `refreshHerdr` syncs it to `~/.config/herdr/` |
 | `env/bash/` | Bash configs and prompt |
 | `env/tmux/` | tmux config (MBP M4) — hosts Claude Code sessions for FleetView |
 | `env/ming64/` | VDI shell config (MinGW64/Git Bash) |
