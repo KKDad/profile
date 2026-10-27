@@ -55,6 +55,9 @@ alias qa='cd ~/git/qa-automation && clear && claude --permission-mode auto'
 alias jira='cd ~/claude-team3 && clear && claude --permission-mode auto'
  
 
+# Register herdr
+source ~/kkdad/profile/env/zsh/herdr.sh
+
 
 # Local secrets (not source-controlled — see ~/.zshrc.secrets)
 ###############################################################
@@ -197,26 +200,6 @@ refreshTmux() {
   # the whole point of hosting them in tmux — so it is safe to run mid-session.
   if command -v tmux &> /dev/null && tmux has-session 2> /dev/null; then
     tmux source-file "$home_conf" && echo "Reloaded running tmux server"
-  fi
-}
-
-# Refresh and reload the herdr configuration. Same newer-wins copy as refreshTmux.
-refreshHerdr() {
-  local repo_conf="$HOME/kkdad/profile/env/herdr/config.toml"
-  local home_conf="$HOME/.config/herdr/config.toml"
-
-  if [ ! -f "$home_conf" ] || [ "$repo_conf" -nt "$home_conf" ]; then
-    echo "Copying from repo to home..."
-    mkdir -p "${home_conf:h}" && cp "$repo_conf" "$home_conf" || return 1
-  elif [ "$home_conf" -nt "$repo_conf" ]; then
-    echo "Copying from home to repo..."
-    cp "$home_conf" "$repo_conf" || return 1
-  else
-    echo "Files are in sync"
-  fi
-
-  if command -v herdr &> /dev/null; then
-    herdr server reload-config && echo "Reloaded running herdr server"
   fi
 }
 
@@ -449,9 +432,6 @@ function update_iterm2_badge_and_title() {
 # Add to Zsh hook so it runs before each prompt
 autoload -U add-zsh-hook
 add-zsh-hook precmd update_iterm2_badge_and_title
-
-# List zsh panes in the herdr Agents panel: idle at the prompt, working while a command runs (no-op outside herdr)
-source ~/kkdad/profile/env/zsh/herdr.sh
 
 # Show profiling results (uncomment if zprof is enabled above)
 # zprof
