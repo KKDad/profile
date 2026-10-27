@@ -33,12 +33,23 @@ _herdr_seq() {
   REPLY=${REPLY%.*}
 }
 
+# Wrapper options that take a separate value are skipped with it, so "sudo -u root vi" reports vi, not root.
 _herdr_program() {
-  local word
+  local word wrapper= skip_value=
   for word in ${(z)1}; do
+    if [[ -n "$skip_value" ]]; then
+      skip_value=
+      continue
+    fi
     case "$word" in
-      *=*|-*|<->) continue ;;
-      sudo|doas|command|builtin|exec|nohup|time|nice|env|caffeinate|noglob|nocorrect) continue ;;
+      *=*|<->) continue ;;
+      -*)
+        case "$wrapper:$word" in
+          sudo:-[ugCDhprtU]|sudo:--(user|group|chdir|host|prompt|role|type|other-user|close-from)) skip_value=1 ;;
+          doas:-[uC]|nice:-n|env:-[uCS]|exec:-a|time:-[fo]) skip_value=1 ;;
+        esac
+        continue ;;
+      sudo|doas|command|builtin|exec|nohup|time|nice|env|caffeinate|noglob|nocorrect) wrapper="$word"; continue ;;
       *) REPLY="${word:t}"; return 0 ;;
     esac
   done
