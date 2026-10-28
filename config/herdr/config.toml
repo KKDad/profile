@@ -9,6 +9,6 @@ sidebar_bg = "#1e1e2e"
 [ui]
 status_indicators = "symbols"
 
-# env/zsh/herdr.sh reports zsh panes as the built-in "amp" agent; keep finished shell commands quiet.
+# shell/zsh/herdr.zsh reports zsh panes as the built-in "amp" agent; keep finished shell commands quiet.
 [ui.sound.agents]
 amp = "off"

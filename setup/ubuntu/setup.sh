@@ -2,7 +2,7 @@
 # Idempotent setup for the Ubuntu dev box. Safe to re-run.
 set -e
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 GIT_DIR="$HOME/git"
 
 echo "===================================================="
@@ -223,7 +223,7 @@ echo "    [✓] Appearance settings applied."
 # ---------------------------------------------------------------------
 echo "--> Verifying dev language tooling..."
 
-# JDKs for Gradle version switching (java17/java21/java25 in ubuntu-dot.bashrc).
+# JDKs for Gradle version switching (java17/java21/java25 in shell/common/java.sh).
 # The apt default (currently OpenJDK 26 via update-alternatives) is left alone.
 declare -a JDK_TO_INSTALL=()
 for v in 17 21 25; do
@@ -270,17 +270,8 @@ fi
 # ---------------------------------------------------------------------
 # 9. DOTFILE DEPLOYMENT
 # ---------------------------------------------------------------------
-echo "--> Deploying bash dotfiles..."
-
-REPO_BASHRC="$REPO_DIR/env/bash/ubuntu-dot.bashrc"
-HOME_BASHRC="$HOME/.bashrc"
-
-if [ ! -f "$HOME_BASHRC" ] || [ "$REPO_BASHRC" -nt "$HOME_BASHRC" ]; then
-    cp "$REPO_BASHRC" "$HOME_BASHRC"
-    echo "    [✓] Deployed $REPO_BASHRC -> $HOME_BASHRC"
-else
-    echo "    [-] $HOME_BASHRC is already up to date."
-fi
+echo "--> Deploying dotfiles..."
+bash "$REPO_DIR/install.sh" ubuntu-vdi
 
 # ---------------------------------------------------------------------
 # 10. SSH CONFIG FOR INTERNAL HOSTS (portainer / cloud)
@@ -369,7 +360,7 @@ fi
 # ---------------------------------------------------------------------
 # 11. DOCKER / PODMAN REMOTE CONNECTIONS
 # ---------------------------------------------------------------------
-bash "$REPO_DIR/docker/setup.sh"
+bash "$REPO_DIR/setup/docker/setup.sh"
 
 # ---------------------------------------------------------------------
 # 12. PTYXIS TERMINAL PALETTE (synced from iTerm2)
@@ -378,7 +369,7 @@ echo "--> Deploying iTerm2-synced Ptyxis palette..."
 
 PTYXIS_PALETTE_DIR="$HOME/.local/share/ptyxis/palettes"
 mkdir -p "$PTYXIS_PALETTE_DIR"
-REPO_PALETTE="$REPO_DIR/ubuntu/iterm-sync.palette"
+REPO_PALETTE="$REPO_DIR/setup/ubuntu/iterm-sync.palette"
 HOME_PALETTE="$PTYXIS_PALETTE_DIR/iterm-sync.palette"
 
 if [ ! -f "$HOME_PALETTE" ] || [ "$REPO_PALETTE" -nt "$HOME_PALETTE" ]; then
@@ -417,7 +408,7 @@ make -C "$SHOTCLIP_DIR" install
 echo "    [✓] shotclip built and installed to ~/.local/bin (shotclip, shotclip-flameshot, shotclip-gnome-screenshot, shotclip-rdp-clipboard-bridge)."
 
 mkdir -p "$HOME/.config/systemd/user"
-REPO_BRIDGE_UNIT="$REPO_DIR/ubuntu/shotclip-rdp-clipboard-bridge.service"
+REPO_BRIDGE_UNIT="$REPO_DIR/setup/ubuntu/shotclip-rdp-clipboard-bridge.service"
 HOME_BRIDGE_UNIT="$HOME/.config/systemd/user/shotclip-rdp-clipboard-bridge.service"
 if [ ! -f "$HOME_BRIDGE_UNIT" ] || [ "$REPO_BRIDGE_UNIT" -nt "$HOME_BRIDGE_UNIT" ]; then
     cp "$REPO_BRIDGE_UNIT" "$HOME_BRIDGE_UNIT"

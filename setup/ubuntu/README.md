@@ -5,7 +5,7 @@ personal, RDP-accessible VDI). Safe to re-run — every step checks current
 state before making changes.
 
 ```
-bash ubuntu/setup.sh
+bash setup/ubuntu/setup.sh
 ```
 
 ## What it does
@@ -40,14 +40,14 @@ bash ubuntu/setup.sh
    favorites, and sets the Tahoe dark wallpaper installed in step 5 as both
    the desktop background and screensaver image.
 8. **Dev language tooling** — installs OpenJDK 17/21/25 via apt (for the
-   `java17`/`java21`/`java25` switcher functions in `ubuntu-dot.bashrc`; the
+   `java17`/`java21`/`java25` switcher functions in `shell/common/java.sh`; the
    apt/`update-alternatives` default JDK is left untouched), installs
    [nvm](https://github.com/nvm-sh/nvm) if missing, and installs
    [pyenv](https://github.com/pyenv/pyenv) plus its Debian/Ubuntu build
    dependencies if missing.
-9. **Dotfiles** — deploys `env/bash/ubuntu-dot.bashrc` to `~/.bashrc` if the
-   repo copy is newer. After that, use the `update` and `refreshBash`
-   shell functions (defined in that file) to keep the two in sync.
+9. **Dotfiles** — runs `install.sh ubuntu-vdi`, which writes a `~/.bashrc`
+   stub that sources the repo (`shell/bash/init.bash` plus
+   `shell/hosts/ubuntu-vdi.bash`). Edit the repo, then run `reload`.
 10. **SSH config for internal hosts** — idempotently manages a marked block in
     `~/.ssh/config` with `Host` entries for `portainer`/`portainer.stapledon.ca`
     and `cloud`/`cloud.stapledon.ca`, scans and adds their `known_hosts`
@@ -56,11 +56,11 @@ bash ubuntu/setup.sh
     hostnames like `ssh portainer` resolve. Warns (non-fatally) if
     `~/.ssh/id_kkdad` isn't present — that private key is restored out of
     band and isn't stored in this repo.
-11. **Docker / Podman remote connections** — see [`docker/README.md`](../docker/README.md).
-    Runs `docker/setup.sh`, which depends on step 10 having set up SSH access
+11. **Docker / Podman remote connections** — see [`setup/docker/README.md`](../docker/README.md).
+    Runs `setup/docker/setup.sh`, which depends on step 10 having set up SSH access
     to the portainer host.
 12. **Ptyxis terminal palette** — deploys an iTerm2-synced color palette
-    (`ubuntu/iterm-sync.palette`) to `~/.local/share/ptyxis/palettes/` if the
+    (`setup/ubuntu/iterm-sync.palette`) to `~/.local/share/ptyxis/palettes/` if the
     repo copy is newer. Select "iTerm2 Sync" under Ptyxis > Preferences >
     Profile > Palette to use it.
 13. **shotclip + RDP clipboard image bridge** — installs shotclip's build

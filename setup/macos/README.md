@@ -1,3 +1,12 @@
+## Re-capturing this machine
+
+Run from the repo root on the machine you're capturing (`work-mac` or `personal-mac`):
+~~~
+brew bundle dump --file=setup/macos/Brewfile.<host> --force --describe
+brew leaves | xargs brew desc --eval-all > setup/macos/brew-leaves.<host>.md
+~~~
+Review the diff before committing: a dump drops anything you added by hand.
+
 ## Homebrew Tips and Tricks
 
 To upgrade homebrew
