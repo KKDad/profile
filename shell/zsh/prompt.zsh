@@ -19,10 +19,8 @@ find_git_branch() {
   fi
 }
 
-precmd() {
-  find_git_dirty
-  find_git_branch
-}
+add-zsh-hook precmd find_git_dirty
+add-zsh-hook precmd find_git_branch
 
 PROMPT='
 ╭ %F{green}%n@%m %F{yellow}%~${git_branch}%F${git_dirty}%F{reset_color}
