@@ -5,7 +5,8 @@
 
 # Performance optimization: Cache completions daily
 autoload -Uz compinit
-if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)" ]; then
+zmodload -F zsh/stat b:zstat
+if [ "$(date +'%j')" != "$(zstat -F '%j' +mtime ~/.zcompdump 2>/dev/null)" ]; then
   compinit
 else
   compinit -C
