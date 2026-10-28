@@ -3,6 +3,9 @@ onboarding = false
 [ui.toast]
 delivery = "herdr"
 
+[theme.custom]
+sidebar_bg = "#1e1e2e"
+
 [ui]
 status_indicators = "symbols"
 
