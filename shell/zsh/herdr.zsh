@@ -7,6 +7,11 @@
 
 [[ "$HERDR_ENV" == 1 ]] && (( $+commands[herdr] )) || return 0
 
+renameWorkspace() {
+  (( $# )) || { print -u2 "usage: renameWorkspace <new name>"; return 1; }
+  herdr workspace rename "$HERDR_WORKSPACE_ID" "$*" >/dev/null && print "Workspace renamed to: $*"
+}
+
 zmodload zsh/datetime
 autoload -Uz add-zsh-hook
 
