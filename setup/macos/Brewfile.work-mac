@@ -1,0 +1,118 @@
+# Work Mac (MBP M4). From `brew bundle dump --describe`, minus the Upgrade-internal tap
+# mirror (homebrew/core and homebrew/cask redirect), its private formulae, and private go modules.
+tap "authzed/tap"
+tap "manaflow-ai/cmux"
+tap "metalbear-co/mirrord"
+tap "mvndaemon/mvnd"
+# Text processing scripting language
+brew "awk"
+# Official Amazon AWS command-line interface
+brew "awscli"
+# Breadth-first version of find
+brew "bfs"
+# OpenType text shaping engine
+brew "harfbuzz"
+# Check Java source against a coding standard
+brew "checkstyle"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
+# Your feedback loop with the agent: review plans and code locally
+brew "crit"
+# Docker Credential Helper for Amazon ECR
+brew "docker-credential-helper-ecr"
+# CLI for FastAPI framework
+brew "fastapi"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Play, record, convert, and stream select audio and video codecs
+brew "ffmpeg"
+# GitHub command-line tool
+brew "gh"
+# Library to load and enumerate PKCS#11 modules
+brew "p11-kit"
+# GNU Transport Layer Security (TLS) Library
+brew "gnutls"
+# Assuan IPC Library
+brew "libassuan"
+# X.509 and CMS library
+brew "libksba"
+# GNU Privacy Guard (OpenPGP)
+brew "gnupg"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
+# GNU Ubiquitous Intelligent Language for Extensions
+brew "guile"
+# Kubernetes package manager
+brew "helm"
+# Agent multiplexer that lives in your terminal
+brew "herdr"
+# Tools and libraries to manipulate images in select formats
+brew "imagemagick"
+# JSON diff and patch
+brew "jd"
+# Command-line interface for JFrog products
+brew "jfrog-cli"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Network authentication protocol
+brew "krb5"
+# Kubernetes command-line interface
+brew "kubernetes-cli"
+# Asynchronous event library
+brew "libevent"
+# Postgres C API library
+brew "libpq"
+# C library implementing the SSH2 protocol
+brew "libssh2"
+# Java-based project management
+brew "maven"
+# Open-source, cross-platform JavaScript runtime environment
+brew "node"
+# Manage multiple Node.js versions
+brew "nvm"
+# Draw UML diagrams
+brew "plantuml"
+# Convert bitmaps to vector graphics
+brew "potrace"
+# Framework for managing multi-language pre-commit hooks
+brew "pre-commit"
+# Show ps output as a tree
+brew "pstree"
+# Python version management
+brew "pyenv"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# CLI proxy to minimize LLM token consumption
+brew "rtk"
+# Tool for Java static analysis (FindBugs's successor)
+brew "spotbugs"
+# CLI for interacting with TektonCD
+brew "tektoncd-cli"
+# Terminal multiplexer
+brew "tmux"
+# Display directories as trees (with optional color/HTML output)
+brew "tree"
+# Validating, recursive, caching DNS resolver
+brew "unbound"
+# Executes a program periodically, showing output fullscreen
+brew "watch"
+# Internet file retriever
+brew "wget"
+# JavaScript package manager
+brew "yarn"
+# Process YAML, JSON, XML, CSV and properties documents from the CLI
+brew "yq"
+# Terminal emulator as alternative to Apple's Terminal app
+cask "iterm2"
+vscode "anthropic.claude-code"
+vscode "bierner.markdown-mermaid"
+vscode "graphql.vscode-graphql"
+vscode "graphql.vscode-graphql-syntax"
+vscode "jebbs.plantuml"
+vscode "meezilla.json"
+vscode "ms-azuretools.vscode-containers"
+vscode "tomoki1207.pdf"
+vscode "vmware.vscode-boot-dev-pack"
+vscode "vscjava.vscode-spring-initializr"
+npm "corepack"
+npm "pnpm"

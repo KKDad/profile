@@ -1,0 +1,14 @@
+onboarding = false
+
+[ui.toast]
+delivery = "herdr"
+
+[theme.custom]
+sidebar_bg = "#1e1e2e"
+
+[ui]
+status_indicators = "symbols"
+
+# shell/zsh/herdr.zsh reports zsh panes as the built-in "amp" agent; keep finished shell commands quiet.
+[ui.sound.agents]
+amp = "off"

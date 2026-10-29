@@ -1,0 +1,13 @@
+# MBP M4 (work). Included from the ~/.gitconfig stub written by install.sh.
+# Relative paths resolve against this file, so identities come straight from the repo.
+[includeIf "gitdir:~/git/"]
+path = ../identities/work.gitconfig
+
+[includeIf "gitdir:~/kkdad/"]
+path = ../identities/kkdad.gitconfig
+
+[includeIf "gitdir:~/kaileigh86/"]
+path = ../identities/kaileigh86.gitconfig
+
+[gpg]
+program = gpg
