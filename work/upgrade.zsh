@@ -10,7 +10,18 @@ alias prs='python ~/runbook/my-pr-gates.py'
 
 # Claude aliases for starting claude in specific directories
 alias opex='cd ~/git/pcl-ai-tools && clear && claude'
-alias cc='cd ~/git && clear && claude --permission-mode auto --model opus'
+cc()
+{
+  local model=opus label
+  if [[ -n "$HERDR_WORKSPACE_ID" ]] && (( $+commands[herdr] )); then
+    label=$(herdr workspace get "$HERDR_WORKSPACE_ID" 2>/dev/null | jq -r '.result.workspace.label // empty')
+    [[ "$label" == (General|"PR Reviews") ]] && model=sonnet
+  fi
+  cd ~/git && clear && claude --permission-mode auto --model "$model" "$@"
+  local exit_code=$?
+  [[ -f ~/kkdad/profile/shell/zsh/herdr.zsh ]] && source ~/kkdad/profile/shell/zsh/herdr.zsh
+  return $exit_code
+}
 alias qa='cd ~/git/qa-automation && clear && claude --permission-mode auto'
 alias jira='cd ~/claude-team3 && clear && claude --permission-mode auto'
 
