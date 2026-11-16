@@ -59,18 +59,14 @@ killzeros()
   set +x
 }
 
-# Setup kubectl configuration
+# Setup kubectl configuration via Teleport (ondemand cluster, default namespace = stack namespace)
 ksetup()
 {
-  local setup_file=~/Downloads/agilbert-setup
-  if [[ ! -f "$setup_file" ]]; then
-    echo "Error: Setup file not found at $setup_file"
-    return 1
-  fi
+  local stack_namespace=${1:-agilbert}
 
   set -x
-  sh "$setup_file" || { set +x; return 1; }
-  rm "$setup_file" || { set +x; return 1; }
+  tsh login --proxy=access.upgrade.com --kube-cluster=ondemand || { set +x; return 1; }
+  kubectl config set-context --current --namespace="$stack_namespace" || { set +x; return 1; }
   set +x
 }
 
