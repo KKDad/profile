@@ -15,6 +15,10 @@ reload() {
 }
 alias refreshZsh=reload
 
+# morning [--dry-run|--no-resume|--max-age MIN|--force|--keep-background|--workspace ID]
+# Exit Claude in every herdr pane, reload zsh there, resume sessions newer than 60 minutes
+alias morning='python3 ~/runbook/herdr-morning.py'
+
 # dotfiles        cd into the repo
 # dotfiles pull   fast-forward from origin, then reload
 # dotfiles push   commit everything (opens the editor) and push
